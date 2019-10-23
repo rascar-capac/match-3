@@ -32,9 +32,17 @@ public class GridManager : MonoBehaviour
     Vector2 _cellExtents;
     // grid half size
     Vector2 _gridExtents;
-    #endregion
-    #region Coroutines
-    IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
+
+	[SerializeField]
+	float minSwitchingRadius;
+
+	Cell _selectedCell;
+	Cell _targetedCell;
+	Vector2 _initialMousePosition;
+	bool _isDragging;
+	#endregion
+	#region Coroutines
+	IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
     {
         for (int i = 0; i < cell._adjacentCells.Length; i++)
         {
@@ -165,14 +173,36 @@ public class GridManager : MonoBehaviour
         print("mouse world position : "+ mouseWorldPosition);
         Cell cellToMove = GetCellFromPosition(ClampPositionToGrid(WorldToGridPosition(mouseWorldPosition)));
         print("(inside emitter) cell :" + cellToMove._tile + " grid position: "+cellToMove._gridPosition+" grid world position: "+cellToMove._gridWorldPosition+" neighbors: "+cellToMove._adjacentCells.ToString());
-        //StartCoroutine(Switching(new Cell(), new Cell(), _switchDuration));
+		//StartCoroutine(Switching(new Cell(), new Cell(), _switchDuration));
+		_selectedCell = cellToMove;
+		_initialMousePosition = e.mousePos;
+		_isDragging = true;
     }
 
-    #endregion
+	public void OnDragEmitter(object sender, EventArgs e)
+	{
+		if (_isDragging)
+		{
+			Vector2 currentMousePosition = Input.mousePosition;
+			if (Vector3.Distance(currentMousePosition, _initialMousePosition) >= minSwitchingRadius)
+			{
+				float switchAngle = Mathf.Atan2(currentMousePosition.y - _initialMousePosition.y, currentMousePosition.x - _initialMousePosition.x) * Mathf.Rad2Deg;
+				int switchIndex = Mathf.FloorToInt(Mathf.Repeat((switchAngle + 45), 360) / 90) * 2;
+				_targetedCell = _selectedCell._adjacentCells[switchIndex];
+				if (_targetedCell != null)
+				{
 
-    #region Methods
+					Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
+				}
+				_isDragging = false;
+			}
+		}
+	}
+	#endregion
 
-    void InitializeCellSize()
+	#region Methods
+
+	void InitializeCellSize()
     {
         _cellSize.x = _gridSize.x / _columnsRows.x;
         _cellSize.y = _gridSize.y / _columnsRows.y;
@@ -246,6 +276,9 @@ public class GridManager : MonoBehaviour
         gm.onGameStartListener += OnGridInitializeEmitter;
         gm.onSwitchListener += OnSwitchEventEmitter;
         gm.onClickListener += OnGridClickEmitter;
-  
-    }
+		gm.onDragListener += OnDragEmitter;
+		_selectedCell = null;
+		_targetedCell = null;
+		_isDragging = false;
+	}
 }
