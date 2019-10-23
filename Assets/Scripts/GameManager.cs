@@ -68,6 +68,9 @@ public class GameManager : MonoBehaviour
         if(_tempTargetedCellsAdjacents[2]._tile._name == e.tileToMove._name && _tempTargetedCellsAdjacents[6]._tile._name == e.tileToMove._name)
         {
             print("My names match with my up and down neighbors");
+            if(e.tileToMove._name == _tempTargetedCellsAdjacents[2]._adjacentCells[2]._tile._name || e.tileToMove._name == _tempTargetedCellsAdjacents[6]._adjacentCells[6]._tile._name){
+                print(_tempTargetedCellsAdjacents[2]._adjacentCells[2]._tile._name+ " ");
+            }
         }
         
     }
