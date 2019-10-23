@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     GridManager helpers;
 
     #endregion
+
     #region EventArgs
     public class OnSwitchEventArgs
     {
@@ -29,6 +30,7 @@ public class GameManager : MonoBehaviour
         public Vector3 mousePos;
     }
     #endregion
+
     #region Event Listeners
     public event EventHandler<EventArgs> onAppInitializeListener;
 
@@ -46,6 +48,80 @@ public class GameManager : MonoBehaviour
 
     public event EventHandler<OnSwitchEventArgs> onSwitchListener;
     #endregion
+
+    #region Event Emitters
+    public void OnAppInitializeEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnAppInitializeEmitter" + e);
+
+    }
+
+    public void OnSwitchEmitter(object sender, OnSwitchEventArgs e)
+    {
+        Cell[] _tempTargetedCellsAdjacents = e.targetedCell._adjacentCells;
+        /*  */
+        if(_tempTargetedCellsAdjacents[0]._tile._name == e.tileToMove._name && _tempTargetedCellsAdjacents[4]._tile._name == e.tileToMove._name)
+        {
+            print("My names match with my right and left neighbors");
+        } else
+        if(_tempTargetedCellsAdjacents[2]._tile._name == e.tileToMove._name && _tempTargetedCellsAdjacents[6]._tile._name == e.tileToMove._name)
+        {
+            print("My names match with my up and down neighbors");
+        }
+        
+    }
+
+    public void OnGameStartEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnGameStartEmitter" + e);
+    }
+    public void OnGamePauseEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnGamePauseEmitter" + e);
+    }
+    public void OnGameEndEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnGameEndEmitter" + e);
+        this.enabled = false;
+    }
+    
+    #endregion
+    
+    #region Event Invokers
+    public void OnAppInitialize()
+    {
+        onAppInitializeListener?.Invoke(this, new EventArgs());
+    }
+    public void OnGameStart()
+    {
+        onGameStartListener?.Invoke(this, new EventArgs());
+    }
+    public void OnGamePause()
+    {
+        onGamePauseListener?.Invoke(this, new EventArgs());
+    }
+    public void OnGameResume()
+    {
+        onGameResumeListener?.Invoke(this, new EventArgs());
+    }
+    public void OnGameEnd()
+    {
+        onGameEndListener?.Invoke(this, new EventArgs());
+    }
+    public void OnClick(OnClickEventArgs e)
+    {
+        onClickListener?.Invoke(this, e);
+    }
+	public void OnDrag()
+	{
+		onDragListener?.Invoke(this, new EventArgs());
+	}
+	#endregion
+
     #region Methodes
     private void Awake()
     {
@@ -82,6 +158,7 @@ public class GameManager : MonoBehaviour
 
     }
     #endregion
+
     #region Co-routines
     public IEnumerator Playing()
     {
@@ -109,64 +186,6 @@ public class GameManager : MonoBehaviour
 
     
     #endregion
-    #region Event Emitters
-    public void OnAppInitializeEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnAppInitializeEmitter" + e);
 
-    }
-    public void OnGameStartEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnGameStartEmitter" + e);
-    }
-    public void OnGamePauseEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnGamePauseEmitter" + e);
-    }
-    public void OnGameEndEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnGameEndEmitter" + e);
-        this.enabled = false;
-    }
-    /*public void OnClickEmitter(object sender, OnClickEventArgs e)
-    {
-        print("I'm inside the event OnClickEmitter" + e);
-    }*/
-    
-    #endregion
 
-    #region Event Invokers
-    public void OnAppInitialize()
-    {
-        onAppInitializeListener?.Invoke(this, new EventArgs());
-    }
-    public void OnGameStart()
-    {
-        onGameStartListener?.Invoke(this, new EventArgs());
-    }
-    public void OnGamePause()
-    {
-        onGamePauseListener?.Invoke(this, new EventArgs());
-    }
-    public void OnGameResume()
-    {
-        onGameResumeListener?.Invoke(this, new EventArgs());
-    }
-    public void OnGameEnd()
-    {
-        onGameEndListener?.Invoke(this, new EventArgs());
-    }
-    public void OnClick(OnClickEventArgs e)
-    {
-        onClickListener?.Invoke(this, e);
-    }
-	public void OnDrag()
-	{
-		onDragListener?.Invoke(this, new EventArgs());
-	}
-	#endregion
 }

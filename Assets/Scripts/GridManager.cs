@@ -41,6 +41,7 @@ public class GridManager : MonoBehaviour
 	Vector2 _initialMousePosition;
 	bool _isDragging;
 	#endregion
+
 	#region Coroutines
 	IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
     {
@@ -80,6 +81,7 @@ public class GridManager : MonoBehaviour
         yield return null;
     }
     #endregion
+
     #region Helpers
     public Vector2Int IndexToGridPosition(int index)
     {
@@ -155,7 +157,7 @@ public class GridManager : MonoBehaviour
         CreateGrid();
         print("I'm inside the event Grid Init");
     }
-   
+
     public void OnSwitchEventEmitter(object sender, GameManager.OnSwitchEventArgs e)
     {
         Tile ttm = e.tileToMove;
@@ -163,8 +165,6 @@ public class GridManager : MonoBehaviour
 
         print("Switch event triggered");
     }
-
-
 
     public void OnGridClickEmitter(object sender, GameManager.OnClickEventArgs e)
     {
