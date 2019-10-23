@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf741acbf52f744ab34fad3f5c7590d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridSize: {x: 7, y: 7}
+  _gridSize: {x: 6, y: 6}
   _columnsRows: {x: 9, y: 9}
   _switchAnimation:
     serializedVersion: 2
@@ -526,7 +526,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f0634fd75ed2fb04fbf87cf7f64cb11b, type: 2}
   - {fileID: 11400000, guid: b2f0fa95c4749e94bad219e2110d94b3, type: 2}
   _switchDuration: 0.5
-  minSwitchingRadius: 0
+  minSwitchingRadius: 20
 --- !u!114 &1271318861
 MonoBehaviour:
   m_ObjectHideFlags: 0
