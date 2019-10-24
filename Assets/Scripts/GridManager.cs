@@ -188,9 +188,7 @@ public class GridManager : MonoBehaviour
 
                     Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
 
-                    Tile tempTgtTile = _targetedCell._tile;
-                    _selectedCell._tile = tempTgtTile;
-                    _targetedCell._tile = tempTile;
+                   
                     StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration));
                     Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
                     OnSwitch(new OnSwitchEventArgs()
