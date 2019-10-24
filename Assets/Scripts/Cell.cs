@@ -28,7 +28,7 @@ public class Cell
     public Cell[] _adjacentCells;
     string _name;
 
-    public bool isEmpty;
+    public bool _isEmpty;
    
     public void getAdjacentCells()
     {
@@ -50,5 +50,6 @@ public class Cell
         _tile = tile;
         _manager = manager;
         _tileGo = tileGo;
+        _isEmpty = false;
     }
 }

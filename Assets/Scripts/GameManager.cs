@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
 	#region Co-routines
+
+
 	public IEnumerator Playing()
     {
         //Touch touch = Input.GetTouch(0);
@@ -60,6 +62,10 @@ public class GameManager : MonoBehaviour
     public event EventHandler<OnClickEventArgs> onClickListener;
 
 	public event EventHandler<EventArgs> onDragListener;
+
+    public event EventHandler<GridManager.OnDropEventArgs> onDropListener;
+
+    public event EventHandler<ScoreManager.OnScoreUpdateArgs> onScoreListener;
     #endregion
 
     #region Event Invokers
@@ -82,6 +88,11 @@ public class GameManager : MonoBehaviour
     public void OnClick(OnClickEventArgs e)
     {
         onClickListener?.Invoke(this, e);
+    }
+
+    public void OnDrop(GridManager.OnDropEventArgs e)
+    {
+        onDropListener?.Invoke(this, e);
     }
 	public void OnDrag()
 	{
@@ -110,7 +121,7 @@ public class GameManager : MonoBehaviour
             e.secondCell._tile = tempTile;
 
             Debug.Log("no match");
-            StartCoroutine(_helpers.Switching(e.firstCell, e.secondCell));
+            StartCoroutine(_helpers.Switching(e.firstCell, e.secondCell, _helpers._switchDuration));
         }
         else
         {
