@@ -17,6 +17,8 @@ public class GameManager : MonoBehaviour
     #endregion
 
 	#region Co-routines
+
+    
 	public IEnumerator Playing()
     {
         
@@ -59,7 +61,11 @@ public class GameManager : MonoBehaviour
     public event EventHandler<OnClickEventArgs> onClickListener;
 
 	public event EventHandler<EventArgs> onDragListener;
-	#endregion
+
+    public event EventHandler<GridManager.OnDropEventArgs> onDropListener;
+
+    public event EventHandler<ScoreManager.OnScoreUpdateArgs> onScoreListener;
+    #endregion
 
 	#region Event Invokers
 	public void OnGameStart()
@@ -81,6 +87,11 @@ public class GameManager : MonoBehaviour
     public void OnClick(OnClickEventArgs e)
     {
         onClickListener?.Invoke(this, e);
+    }
+
+    public void OnDrop(GridManager.OnDropEventArgs e)
+    {
+        onDropListener?.Invoke(this, e);
     }
 	public void OnDrag()
 	{

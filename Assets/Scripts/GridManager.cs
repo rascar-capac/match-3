@@ -27,6 +27,9 @@ public class GridManager : MonoBehaviour
     [SerializeField]
     float _switchDuration = 0.5f;
 
+    [SerializeField]
+    float _dropDuration = 0.2f;
+
     Vector2 _cellSize;
     // cell half size
     Vector2 _cellExtents;
@@ -63,6 +66,10 @@ public class GridManager : MonoBehaviour
         targetedCell._tileGo.transform.position = startPosition;
         targetedCell._tileGo.transform.localScale = Vector3.one;
 
+        bool tempEmpty = targetedCell._isEmpty;
+        cell._isEmpty = tempEmpty;
+
+
         GameObject tempTileGo = cell._tileGo;
         cell._tileGo = targetedCell._tileGo;
         targetedCell._tileGo = tempTileGo;
@@ -74,6 +81,27 @@ public class GridManager : MonoBehaviour
         print("I moved " + tempTileGo);
 
         yield return null;
+    }
+
+    //ENUMERATOR DE TEST
+
+    public IEnumerator Dropping()
+    {
+        while (true)
+        {
+            for (int i = 0; i < _cells.Length; i++)
+            {
+                if(_cells[i]._adjacentCells[6] != null && _cells[i]._adjacentCells[6]._isEmpty == false)
+                {
+                    Cell cellToDrop = _cells[i];
+                    Cell emptyCell = _cells[i]._adjacentCells[6];
+
+                    StartCoroutine(Switching(cellToDrop, emptyCell, _dropDuration));
+                    print(cellToDrop._tileGo.name + " Should drop");
+                }
+            }
+            yield return null;
+        }
     }
     #endregion
 
@@ -131,7 +159,11 @@ public class GridManager : MonoBehaviour
     //     public Vector2Int columnsRows;
     //     public Vector2Int cellSize;
     // }
-
+    public class OnDropEventArgs
+    {
+        public Cell cellToDrop;
+        public Cell emptyCell;
+    }
     public class OnSwitchEventArgs
     {
         public Cell[] cells;
@@ -143,6 +175,7 @@ public class GridManager : MonoBehaviour
 
     #region Event Listeners
     public event EventHandler<OnSwitchEventArgs> onSwitchListener;
+
     #endregion
 
     #region Event Invokers
@@ -188,9 +221,7 @@ public class GridManager : MonoBehaviour
 
                     Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
 
-                    Tile tempTgtTile = _targetedCell._tile;
-                    _selectedCell._tile = tempTgtTile;
-                    _targetedCell._tile = tempTile;
+                   
                     StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration));
                     Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
                     OnSwitch(new OnSwitchEventArgs()
@@ -238,7 +269,6 @@ public class GridManager : MonoBehaviour
         tempTile._cellIndex = cellIndex;
         tempTile._tileFamily = tileData._tileFamily;
         tempTile._display = tileData._display;
-        tempTile._isEmpty = false;
 
         BoxCollider2D bx = tileGO.AddComponent<BoxCollider2D>();
 
