@@ -46,14 +46,14 @@ public class GridManager : MonoBehaviour
         float tRatio;
         float tAnim;
         Vector3 startPosition = cell._tileGo.transform.position;
-        Vector3 endPosition = GridPositionToWorldPosition(_targetedCell._gridPosition);
+        Vector3 endPosition = targetedCell._tileGo.transform.position; 
         while (t < switchDuration)
         {
             tRatio = t / switchDuration;
             tAnim = _switchAnimation.Evaluate(tRatio);
             cell._tileGo.transform.position = Vector3.Lerp(startPosition, endPosition, tAnim);
             targetedCell._tileGo.transform.position = Vector3.Lerp(endPosition, startPosition, tAnim);
-            /*cell._tileGo.transform.localScale = Vector3.one + Vector3.one * Mathf.Sin(tAnim * Mathf.PI);*/
+           
             t += Time.deltaTime;
             yield return null;
         }
@@ -64,16 +64,14 @@ public class GridManager : MonoBehaviour
         targetedCell._tileGo.transform.localScale = Vector3.one;
 
         GameObject tempTileGo = cell._tileGo;
-        /*cell._tileGo = targetedCell._tileGo;
-        targetedCell._tileGo = tempTileGo;*/
+        cell._tileGo = targetedCell._tileGo;
+        targetedCell._tileGo = tempTileGo;
 
         Tile tempTile = cell._tile;
         cell._tile = targetedCell._tile;
         targetedCell._tile = tempTile;
 
         print("I moved " + tempTileGo);
-
-
 
         yield return null;
     }
@@ -183,11 +181,13 @@ public class GridManager : MonoBehaviour
             if (Vector2.Distance(currentMousePosition, _initialMousePosition) >= switchLimit)
             {
                 int switchIndex = Mathf.FloorToInt(Mathf.Repeat((switchAngle + 45), 360) / 90) * 2;
+                    Debug.Log("(inside emitter) selectedCell : " + _selectedCell._tile + " grid position: " + _selectedCell._gridPosition + " grid world position: " + _selectedCell._gridWorldPosition + " neighbors: " + _selectedCell._adjacentCells.ToString());
                 _targetedCell = _selectedCell._adjacentCells[switchIndex];
                 if (_targetedCell != null)
                 {
 
                     Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
+
                     Tile tempTgtTile = _targetedCell._tile;
                     _selectedCell._tile = tempTgtTile;
                     _targetedCell._tile = tempTile;
