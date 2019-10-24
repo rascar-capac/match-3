@@ -33,51 +33,51 @@ public class GridManager : MonoBehaviour
     // grid half size
     Vector2 _gridExtents;
 
-	[SerializeField]
-	float minSwitchingRadius;
+    [SerializeField]
+    float minSwitchingRadius;
 
-	Cell _selectedCell;
-	Cell _targetedCell;
-	Vector2 _initialMousePosition;
-	bool _isDragging;
-	#endregion
+    Cell _selectedCell;
+    Cell _targetedCell;
+    Vector2 _initialMousePosition;
+    bool _isDragging;
+    #endregion
 
-	#region Coroutines
-	IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
+    #region Coroutines
+    IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
     {
-        for (int i = 0; i < cell._adjacentCells.Length; i++)
+        float t = 0;
+        float tRatio;
+        float tAnim;
+        Vector3 startPosition = cell._tileGo.transform.position;
+        Vector3 endPosition = GridPositionToWorldPosition(_targetedCell._gridPosition);
+        while (t < switchDuration)
         {
-            if (cell._adjacentCells[i] != null && i == targetedCell._index)
-            {
-                float t = 0;
-                float tRatio;
-                float tAnim;
-                Vector3 startPosition = cell._tileGo.transform.position;
-                Vector3 endPosition = GridPositionToWorldPosition(cell._adjacentCells[i]._gridPosition);
-                while (t < switchDuration)
-                {
-                    tRatio = t / switchDuration;
-                    tAnim = _switchAnimation.Evaluate(tRatio);
-                    cell._tileGo.transform.position = Vector3.Lerp(startPosition, endPosition, tAnim);
-                    /*cell._tileGo.transform.localScale = Vector3.one + Vector3.one * Mathf.Sin(tAnim * Mathf.PI);*/
-                    t += Time.deltaTime;
-                    yield return null;
-                }
-                cell._tileGo.transform.position = endPosition;
-                cell._tileGo.transform.localScale = Vector3.one;
-
-                GameObject tempTileGo = cell._tileGo;
-                cell._tileGo = cell._adjacentCells[i]._tileGo;
-                cell._adjacentCells[i]._tileGo = tempTileGo;
-
-                Tile tempTile = cell._tile;
-                cell._tile = cell._adjacentCells[i]._tile;
-                cell._adjacentCells[i]._tile = tempTile;
-
-                print("I moved " + tempTileGo);
-                break;
-            }
+            tRatio = t / switchDuration;
+            tAnim = _switchAnimation.Evaluate(tRatio);
+            cell._tileGo.transform.position = Vector3.Lerp(startPosition, endPosition, tAnim);
+            targetedCell._tileGo.transform.position = Vector3.Lerp(endPosition, startPosition, tAnim);
+            /*cell._tileGo.transform.localScale = Vector3.one + Vector3.one * Mathf.Sin(tAnim * Mathf.PI);*/
+            t += Time.deltaTime;
+            yield return null;
         }
+        cell._tileGo.transform.position = endPosition;
+        cell._tileGo.transform.localScale = Vector3.one;
+
+        targetedCell._tileGo.transform.position = startPosition;
+        targetedCell._tileGo.transform.localScale = Vector3.one;
+
+        GameObject tempTileGo = cell._tileGo;
+        /*cell._tileGo = targetedCell._tileGo;
+        targetedCell._tileGo = tempTileGo;*/
+
+        Tile tempTile = cell._tile;
+        cell._tile = targetedCell._tile;
+        targetedCell._tile = tempTile;
+
+        print("I moved " + tempTileGo);
+
+
+
         yield return null;
     }
     #endregion
@@ -135,7 +135,7 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Event Args
-    
+
     public class OnCellCreationArgs : EventArgs
     {
         public Vector2Int columnsRows;
@@ -148,7 +148,7 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Event Invokers
-    
+
     #endregion
 
     #region Event Emitters
@@ -162,45 +162,54 @@ public class GridManager : MonoBehaviour
     {
         Tile ttm = e.tileToMove;
         Tile tgt = e.targetedTile;
-
+        Tile tempTgtTile = _targetedCell._tile;
         print("Switch event triggered");
     }
 
     public void OnGridClickEmitter(object sender, GameManager.OnClickEventArgs e)
     {
-		_initialMousePosition = _camera.ScreenToWorldPoint(e.mousePos);
+        _initialMousePosition = _camera.ScreenToWorldPoint(e.mousePos);
         Cell cellToMove = GetCellFromPosition(ClampPositionToGrid(WorldToGridPosition(_initialMousePosition)));
-        print("(inside emitter) cell :" + cellToMove._tile + " grid position: "+cellToMove._gridPosition+" grid world position: "+cellToMove._gridWorldPosition+" neighbors: "+cellToMove._adjacentCells.ToString());
-		//StartCoroutine(Switching(new Cell(), new Cell(), _switchDuration));
-		_selectedCell = cellToMove;
-		_isDragging = true;
+        print("(inside emitter) cell :" + cellToMove._tile + " grid position: " + cellToMove._gridPosition + " grid world position: " + cellToMove._gridWorldPosition + " neighbors: " + cellToMove._adjacentCells.ToString());
+        //StartCoroutine(Switching(new Cell(), new Cell(), _switchDuration));
+        _selectedCell = cellToMove;
+        _isDragging = true;
     }
 
-	public void OnDragEmitter(object sender, EventArgs e)
-	{
-		if (_isDragging)
-		{
-			Vector2 currentMousePosition = _camera.ScreenToWorldPoint( Input.mousePosition);
+    public void OnDragEmitter(object sender, EventArgs e)
+    {
+        if (_isDragging)
+        {
+            Vector2 currentMousePosition = _camera.ScreenToWorldPoint(Input.mousePosition);
+            Tile tempTile = _selectedCell._tile;
 
-			float switchAngle = Mathf.Atan2(currentMousePosition.y - _initialMousePosition.y, currentMousePosition.x - _initialMousePosition.x) * Mathf.Rad2Deg;
-			float switchLimit = ((switchAngle < 45 && switchAngle > -45) || (switchAngle > 135 && switchAngle < -135) ? _cellExtents.x: _cellExtents.y);
-			if (Vector2.Distance(currentMousePosition, _initialMousePosition) >= switchLimit)
-			{
-				int switchIndex = Mathf.FloorToInt(Mathf.Repeat((switchAngle + 45), 360) / 90) * 2;
-				_targetedCell = _selectedCell._adjacentCells[switchIndex];
-				if (_targetedCell != null)
-				{
-					Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
-				}
-				_isDragging = false;
-			}
-		}
-	}
-	#endregion
+            float switchAngle = Mathf.Atan2(currentMousePosition.y - _initialMousePosition.y, currentMousePosition.x - _initialMousePosition.x) * Mathf.Rad2Deg;
+            float switchLimit = ((switchAngle < 45 && switchAngle > -45) || (switchAngle > 135 && switchAngle < -135) ? _cellExtents.x : _cellExtents.y);
+            if (Vector2.Distance(currentMousePosition, _initialMousePosition) >= switchLimit)
+            {
+                int switchIndex = Mathf.FloorToInt(Mathf.Repeat((switchAngle + 45), 360) / 90) * 2;
+                _targetedCell = _selectedCell._adjacentCells[switchIndex];
+                if (_targetedCell != null)
+                {
 
-	#region Methods
+                    Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
+                    Tile tempTgtTile = _targetedCell._tile;
+                    _selectedCell._tile = tempTgtTile;
+                    _targetedCell._tile = tempTile;
+                    StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration));
+                    Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
+                    _targetedCell = null;
+                    _selectedCell = null;
+                }
+                _isDragging = false;
+            }
+        }
+    }
+    #endregion
 
-	void InitializeCellSize()
+    #region Methods
+
+    void InitializeCellSize()
     {
         _cellSize.x = _gridSize.x / _columnsRows.x;
         _cellSize.y = _gridSize.y / _columnsRows.y;
@@ -218,8 +227,8 @@ public class GridManager : MonoBehaviour
         int cellIndex = GridPositionToIndex(x, y);
 
         TileData tileData = _tileDatas[UnityEngine.Random.Range(0, _tileDatas.Length)];
-        GameObject tileGO = new GameObject(tileData._name+ " "+ cellIndex);
-        
+        GameObject tileGO = new GameObject(tileData._name + " " + cellIndex);
+
 
         SpriteRenderer sr = tileGO.AddComponent<SpriteRenderer>();
 
@@ -228,14 +237,16 @@ public class GridManager : MonoBehaviour
         tempTile._name = tileData._name;
         tempTile._cellIndex = cellIndex;
         tempTile._tileFamily = tileData._tileFamily;
+        tempTile._display = tileData._display;
+        tempTile._isEmpty = false;
 
         BoxCollider2D bx = tileGO.AddComponent<BoxCollider2D>();
 
         bx.size = new Vector2(_cellExtents.x, _cellExtents.y);
         bx.isTrigger = true;
-        
+
         tileGO.transform.position = GridPositionToWorldPosition(x, y);
-        
+
 
         sr.sprite = tileData._display;
         sr.color = tileData._color;
@@ -274,9 +285,9 @@ public class GridManager : MonoBehaviour
         gm.onGameStartListener += OnGridInitializeEmitter;
         gm.onSwitchListener += OnSwitchEventEmitter;
         gm.onClickListener += OnGridClickEmitter;
-		gm.onDragListener += OnDragEmitter;
-		_selectedCell = null;
-		_targetedCell = null;
-		_isDragging = false;
-	}
+        gm.onDragListener += OnDragEmitter;
+        _selectedCell = null;
+        _targetedCell = null;
+        _isDragging = false;
+    }
 }

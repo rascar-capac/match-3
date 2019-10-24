@@ -130,15 +130,16 @@ public class GameManager : MonoBehaviour
     {
         //FindObjectOfType<SoundManager>().onPlaySoundListener += OnAppInitializeEmitter;
         OnAppInitialize();
-        helpers.onSwitchListener += OnSwitchEmitter;
+        helpers = GetComponent<GridManager>();
+        
     }
     private void Start()
     {
-        helpers = GetComponent<GridManager>();
+        
         #region souscriptions en début de partie
         FindObjectOfType<TimerManager>().onGameEndTimerListener += OnGameEndEmitter;
         FindObjectOfType<ScoreManager>().onScoreUpdateListener += OnGameStartEmitter;
-        
+        helpers.onSwitchListener += OnSwitchEmitter;
         //onGameStartListener += OnGameStartEmitter;
         #endregion
         OnGameStart();

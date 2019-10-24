@@ -20,9 +20,10 @@ public enum TileFamily
 public class Tile : MonoBehaviour
 {
     public int _cellIndex;
-    public TileType _tileType;
     public string _name;
+    public TileType _tileType;
     public TileFamily _tileFamily;
-    public Sprite[] _display;
+    public Sprite _display;
     public Color _color;
+    public bool _isEmpty;
 }
