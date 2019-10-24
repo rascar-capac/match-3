@@ -21,7 +21,7 @@ public class TimerManager : MonoBehaviour
 	}
 	private void UpdateTextTimer()
 	{
-		_textTimer.text = "Timer : " + Mathf.Round(_timer * 10 / 10f);
+		_textTimer.text = Mathf.Round(_timer * 10 / 10f).ToString();
 	}
 	private void Awake()
 	{

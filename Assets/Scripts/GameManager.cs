@@ -9,8 +9,10 @@ public class GameManager : MonoBehaviour
 
     #region Params
     [SerializeField]
-    private Button _button;
-    private bool _isPaused = false;
+    private Button _pauseButton;
+	public bool _gameIsPaused = false;
+	[SerializeField]
+	GameObject _pauseMenuUI;
 
     GridManager helpers;
     #endregion
@@ -126,23 +128,16 @@ public class GameManager : MonoBehaviour
         #region souscriptions en début de partie
         FindObjectOfType<TimerManager>().onGameEndTimerListener += OnGameEndEmitter;
         FindObjectOfType<ScoreManager>().onScoreUpdateListener += OnGameStartEmitter;
+		onGamePauseListener += OnGamePauseEmitter;
+		_pauseButton.onClick.AddListener(OnGamePause);
         //helpers.onSwitchListener += OnSwitchEmitter;
-        //onGameStartListener += OnGameStartEmitter;
-        #endregion
-        OnGameStart();
+		//onGameStartListener += OnGameStartEmitter;
+		#endregion
+		OnGameStart();
         StartCoroutine(Playing());
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Je suis en pause");
-            TogglePause();
-        }
-    }
-    public void TogglePause()
-    {
-        _isPaused = !_isPaused;
 
     }
 
@@ -193,10 +188,44 @@ public class GameManager : MonoBehaviour
             return false;
         }
     }
-    #endregion
+	#region PauseManager
+	public void TogglePause()
+	{
+		if (_gameIsPaused)
+		{
+			Resume();
+		} else
+		{
+			Pause();
+		}
 
-    #region Co-routines
-    public IEnumerator Playing()
+	}
+	public void Resume()
+	{
+		_pauseMenuUI.SetActive(false);
+		Time.timeScale = 1f;
+		_gameIsPaused = false;
+	}
+	void Pause()
+	{
+		_pauseMenuUI.SetActive(true);
+		Time.timeScale = 0f;
+		_gameIsPaused = true;
+	}
+	public void LoadMenu()
+	{
+		SceneManager.LoadScene("MenuScene");
+	}
+	public void QuitGame()
+	{
+		Debug.Log("Quitting game...");
+		Application.Quit();
+	}
+	#endregion
+	#endregion
+
+	#region Co-routines
+	public IEnumerator Playing()
     {
         //Touch touch = Input.GetTouch(0);
         while (true)
