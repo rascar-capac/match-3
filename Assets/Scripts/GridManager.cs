@@ -226,7 +226,7 @@ public class GridManager : MonoBehaviour
         }
     }
 
-    public void OnMatchEmitter(object sender, EventArgs e)
+    public void OnMatchEmitter(object sender, GameManager.OnMatchEventArgs e)
     {
         // destroy match gameobjects
     }
