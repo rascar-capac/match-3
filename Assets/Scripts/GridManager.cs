@@ -25,7 +25,7 @@ public class GridManager : MonoBehaviour
     TileData[] _tileDatas;
 
     [SerializeField]
-    float _switchDuration = 0.5f;
+    public float _switchDuration = 0.5f;
 
     [SerializeField]
     float _dropDuration = 0.2f;
@@ -43,20 +43,20 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Coroutines
-    IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
+    public IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
     {
         float t = 0;
         float tRatio;
         float tAnim;
         Vector3 startPosition = cell._tileGo.transform.position;
-        Vector3 endPosition = targetedCell._tileGo.transform.position; 
+        Vector3 endPosition = targetedCell._tileGo.transform.position;
         while (t < switchDuration)
         {
             tRatio = t / switchDuration;
             tAnim = _switchAnimation.Evaluate(tRatio);
             cell._tileGo.transform.position = Vector3.Lerp(startPosition, endPosition, tAnim);
             targetedCell._tileGo.transform.position = Vector3.Lerp(endPosition, startPosition, tAnim);
-           
+
             t += Time.deltaTime;
             yield return null;
         }
@@ -73,12 +73,6 @@ public class GridManager : MonoBehaviour
         GameObject tempTileGo = cell._tileGo;
         cell._tileGo = targetedCell._tileGo;
         targetedCell._tileGo = tempTileGo;
-
-        Tile tempTile = cell._tile;
-        cell._tile = targetedCell._tile;
-        targetedCell._tile = tempTile;
-
-        print("I moved " + tempTileGo);
 
         yield return null;
     }
@@ -145,7 +139,7 @@ public class GridManager : MonoBehaviour
     }
     public int GridPositionToIndex(int x, int y)
     {
-        return (x * _columnsRows.y + y);
+        return (y * _columnsRows.x + x);
     }
     public int GridPositionToIndex(Vector2Int position)
     {
@@ -154,22 +148,18 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Event Args
-    // public class OnCellCreationArgs : EventArgs
-    // {
-    //     public Vector2Int columnsRows;
-    //     public Vector2Int cellSize;
-    // }
     public class OnDropEventArgs
     {
         public Cell cellToDrop;
         public Cell emptyCell;
     }
+
     public class OnSwitchEventArgs
     {
         public Cell[] cells;
         public Vector2Int columnsRows;
-        public Cell switchedCell;
-        public Cell targetedCell;
+        public Cell firstCell;
+        public Cell secondCell;
     }
     #endregion
 
@@ -189,7 +179,6 @@ public class GridManager : MonoBehaviour
     public void OnGridInitializeEmitter(object sender, EventArgs e)
     {
         CreateGrid();
-        print("I'm inside the event Grid Init");
     }
 
     public void OnGridClickEmitter(object sender, GameManager.OnClickEventArgs e)
@@ -197,7 +186,6 @@ public class GridManager : MonoBehaviour
         _initialMousePosition = _camera.ScreenToWorldPoint(e.mousePos);
         Cell cellToMove = GetCellFromPosition(ClampPositionToGrid(WorldToGridPosition(_initialMousePosition)));
         print("(inside emitter) cell :" + cellToMove._tile + " grid position: " + cellToMove._gridPosition + " grid world position: " + cellToMove._gridWorldPosition + " neighbors: " + cellToMove._adjacentCells.ToString());
-        //StartCoroutine(Switching(new Cell(), new Cell(), _switchDuration));
         _selectedCell = cellToMove;
         _isDragging = true;
     }
@@ -218,19 +206,17 @@ public class GridManager : MonoBehaviour
                 _targetedCell = _selectedCell._adjacentCells[switchIndex];
                 if (_targetedCell != null)
                 {
-
                     Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
-
-                   
                     StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration));
-                    Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
                     OnSwitch(new OnSwitchEventArgs()
                     {
                         cells = _cells,
                         columnsRows = _columnsRows,
-                        switchedCell = _selectedCell,
-                        targetedCell = _targetedCell
+                        firstCell = _selectedCell,
+                        secondCell = _targetedCell
                     });
+
+                    Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
 
                     _targetedCell = null;
                     _selectedCell = null;
@@ -249,10 +235,6 @@ public class GridManager : MonoBehaviour
         _cellExtents = _cellSize * 0.5f;
         _gridExtents = _gridSize * 0.5f;
     }
-
-    /*
-    yield return StartCoroutine(Switch(cellToMove, _switchDuration));
-    */
 
     void CreateCell(int x, int y)
     {

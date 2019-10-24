@@ -13,15 +13,15 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	GameObject _pauseMenuUI;
 
-    GridManager helpers;
+    GridManager _helpers;
     #endregion
 
 	#region Co-routines
 
-    
+
 	public IEnumerator Playing()
     {
-        
+
         while (true)
         {
             if (Input.GetMouseButtonDown(0))
@@ -103,18 +103,38 @@ public class GameManager : MonoBehaviour
 
     public void OnSwitchEmitter(object sender, GridManager.OnSwitchEventArgs e)
     {
+
+
+        Tile tempTile = e.firstCell._tile;
+        e.firstCell._tile = e.secondCell._tile;
+        e.secondCell._tile = tempTile;
+
         List<List<Cell>> matches = new List<List<Cell>>();
-        CheckMatches(e.cells, e.columnsRows, e.switchedCell, e.targetedCell, matches);
-        CheckMatches(e.cells, e.columnsRows, e.targetedCell, e.switchedCell, matches);
+        CheckMatches(e.cells, e.columnsRows, e.firstCell, matches);
+        CheckMatches(e.cells, e.columnsRows, e.secondCell, matches);
 
         if(matches.Count == 0)
         {
-            // no switch
+            tempTile = e.firstCell._tile;
+            e.firstCell._tile = e.secondCell._tile;
+            e.secondCell._tile = tempTile;
+
+            Debug.Log("no match");
+            StartCoroutine(_helpers.Switching(e.firstCell, e.secondCell, _helpers._switchDuration));
         }
         else
         {
-            // switch
-            // match event -> score et cascades
+            Debug.Log(matches.Count + " matches");
+            foreach(List<Cell> match in matches)
+            {
+                String matchDescription = "";
+                foreach(Cell cell in match)
+                {
+                    matchDescription += cell._gridPosition + " - ";
+                }
+                Debug.Log(matchDescription);
+            }
+            // onMatchListener?.Invoke(this, new EventArgs(){})// match event -> score et cascades
         }
     }
 
@@ -139,8 +159,8 @@ public class GameManager : MonoBehaviour
     #region Methods
     private void Awake()
     {
-        helpers = GetComponent<GridManager>();
-        helpers.onSwitchListener += OnSwitchEmitter;
+        _helpers = GetComponent<GridManager>();
+        _helpers.onSwitchListener += OnSwitchEmitter;
     }
     private void Start()
     {
@@ -150,29 +170,30 @@ public class GameManager : MonoBehaviour
 		onGameStartListener += OnGameStartEmitter;
 		onGamePauseListener += OnGamePauseEmitter;
 		_pauseButton.onClick.AddListener(OnGamePause);
-		
+
 		#endregion
 		OnGameStart();
         StartCoroutine(Playing());
     }
 
-    public void CheckMatches(Cell[] cells, Vector2Int columnsRows, Cell comparedCell, Cell otherCell, List<List<Cell>> matches)
+    public void CheckMatches(Cell[] cells, Vector2Int columnsRows, Cell comparedCell, List<List<Cell>> matches)
     {
-        matches.Add(CheckLine(true, cells, columnsRows, comparedCell, otherCell));
-        matches.Add(CheckLine(false, cells, columnsRows, comparedCell, otherCell));
+        CheckLine(true, cells, columnsRows, comparedCell, matches);
+        CheckLine(false, cells, columnsRows, comparedCell, matches);
     }
 
-    public List<Cell> CheckLine(bool horizontalLine, Cell[] cells, Vector2Int columnsRows, Cell comparedCell, Cell otherCell)
+    public void CheckLine(bool horizontalLine, Cell[] cells, Vector2Int columnsRows, Cell comparedCell, List<List<Cell>> matches)
     {
         List<Cell> matchingCells = new List<Cell>();
-        int initialIndex = horizontalLine ? otherCell._gridPosition.x : otherCell._gridPosition.y;
+        matchingCells.Add(comparedCell);
+        int initialIndex = horizontalLine ? comparedCell._gridPosition.x : comparedCell._gridPosition.y;
         int cellToCheckIndex;
 
         int i = initialIndex;
         bool isMatching = true;
         while(isMatching && --i >= 0)
         {
-            cellToCheckIndex = horizontalLine ? otherCell._gridPosition.y * columnsRows.x + i : i * columnsRows.x + otherCell._gridPosition.x;
+            cellToCheckIndex = horizontalLine ? comparedCell._gridPosition.y * columnsRows.x + i : i * columnsRows.x + comparedCell._gridPosition.x;
             isMatching = CheckCell(comparedCell, cells[cellToCheckIndex], matchingCells);
         }
 
@@ -180,19 +201,19 @@ public class GameManager : MonoBehaviour
         isMatching = true;
         while(isMatching && ++i < (horizontalLine ? columnsRows.x : columnsRows.y))
         {
-            cellToCheckIndex = horizontalLine ? otherCell._gridPosition.y * columnsRows.x + i : i * columnsRows.x + otherCell._gridPosition.x;
+            cellToCheckIndex = horizontalLine ? comparedCell._gridPosition.y * columnsRows.x + i : i * columnsRows.x + comparedCell._gridPosition.x;
             isMatching = CheckCell(comparedCell, cells[cellToCheckIndex], matchingCells);
         }
 
         if(matchingCells.Count > 2)
         {
-            return matchingCells;
+            matches.Add(matchingCells);
         }
-        return null;
     }
 
     public bool CheckCell(Cell comparedCell, Cell cellToCheck, List<Cell> matchingCells)
     {
+        Debug.Log(cellToCheck._tile._name + " " + cellToCheck._gridPosition + " - " + comparedCell._tile._name + " " + comparedCell._gridPosition);
         if(cellToCheck._tile._name == comparedCell._tile._name)
         {
             matchingCells.Add(cellToCheck);
