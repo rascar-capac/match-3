@@ -133,20 +133,30 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Event Args
-
     public class OnCellCreationArgs : EventArgs
     {
         public Vector2Int columnsRows;
         public Vector2Int cellSize;
     }
+
+    public class OnSwitchEventArgs
+    {
+        public Cell[] cells;
+        public Vector2Int columnsRows;
+        public Cell switchedCell;
+        public Cell targetedCell;
+    }
     #endregion
 
     #region Event Listeners
-    public event EventHandler<GameManager.OnSwitchEventArgs> onSwitchListener;
+    public event EventHandler<OnSwitchEventArgs> onSwitchListener;
     #endregion
 
     #region Event Invokers
-
+        public void OnSwitch(OnSwitchEventArgs e)
+        {
+            onSwitchListener?.Invoke(this, e);
+        }
     #endregion
 
     #region Event Emitters
@@ -156,13 +166,13 @@ public class GridManager : MonoBehaviour
         print("I'm inside the event Grid Init");
     }
 
-    public void OnSwitchEventEmitter(object sender, GameManager.OnSwitchEventArgs e)
-    {
-        Tile ttm = e.tileToMove;
-        Tile tgt = e.targetedTile;
-        Tile tempTgtTile = _targetedCell._tile;
-        print("Switch event triggered");
-    }
+    // public void OnSwitchEventEmitter(object sender, GameManager.OnSwitchEventArgs e)
+    // {
+    //     Tile ttm = e.tileToMove;
+    //     Tile tgt = e.targetedTile;
+    //     Tile tempTgtTile = _targetedCell._tile;
+    //     print("Switch event triggered");
+    // }
 
     public void OnGridClickEmitter(object sender, GameManager.OnClickEventArgs e)
     {
@@ -198,6 +208,14 @@ public class GridManager : MonoBehaviour
                     _targetedCell._tile = tempTile;
                     StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration));
                     Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
+                    OnSwitch(new OnSwitchEventArgs()
+                    {
+                        cells = _cells,
+                        columnsRows = _columnsRows,
+                        switchedCell = _selectedCell,
+                        targetedCell = _targetedCell
+                    });
+
                     _targetedCell = null;
                     _selectedCell = null;
                 }
@@ -208,7 +226,6 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Methods
-
     void InitializeCellSize()
     {
         _cellSize.x = _gridSize.x / _columnsRows.x;
@@ -275,7 +292,6 @@ public class GridManager : MonoBehaviour
         }
         print("Grid created");
     }
-    #endregion
 
     private void Awake()
     {
@@ -283,11 +299,11 @@ public class GridManager : MonoBehaviour
         GameManager gm = GetComponent<GameManager>();
         _camera = Camera.main;
         gm.onGameStartListener += OnGridInitializeEmitter;
-        gm.onSwitchListener += OnSwitchEventEmitter;
         gm.onClickListener += OnGridClickEmitter;
         gm.onDragListener += OnDragEmitter;
         _selectedCell = null;
         _targetedCell = null;
         _isDragging = false;
     }
+    #endregion
 }

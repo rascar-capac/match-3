@@ -9,91 +9,21 @@ public class GameManager : MonoBehaviour
 
     #region Params
     [SerializeField]
-    private Button _button;
-    private bool _isPaused = false;
+    private Button _pauseButton;
+	public bool _gameIsPaused = false;
+	[SerializeField]
+	GameObject _pauseMenuUI;
 
     GridManager helpers;
-
     #endregion
 
     #region EventArgs
-    public class OnSwitchEventArgs
-    {
-        public Tile tileToMove;
-        public Tile targetedTile;
-        public Cell cellToMove;
-        public Cell targetedCell;
-    }
-
     public class OnClickEventArgs
     {
         public Vector3 mousePos;
     }
     #endregion
 
-    #region Event Listeners
-    public event EventHandler<EventArgs> onAppInitializeListener;
-
-    public event EventHandler<EventArgs> onGameStartListener;
-
-    public event EventHandler<OnClickEventArgs> onClickListener;
-
-	public event EventHandler<EventArgs> onDragListener;
-
-	public event EventHandler<EventArgs> onGamePauseListener;
-
-    public event EventHandler<EventArgs> onGameResumeListener;
-
-    public event EventHandler<EventArgs> onGameEndListener;
-
-    public event EventHandler<OnSwitchEventArgs> onSwitchListener;
-    #endregion
-
-    #region Event Emitters
-    public void OnAppInitializeEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnAppInitializeEmitter" + e);
-
-    }
-
-    public void OnSwitchEmitter(object sender, OnSwitchEventArgs e)
-    {
-        Cell[] _tempTargetedCellsAdjacents = e.targetedCell._adjacentCells;
-        /*  */
-        if(_tempTargetedCellsAdjacents[0]._tile._name == e.tileToMove._name && _tempTargetedCellsAdjacents[4]._tile._name == e.tileToMove._name)
-        {
-            print("My names match with my right and left neighbors");
-        } else
-        if(_tempTargetedCellsAdjacents[2]._tile._name == e.tileToMove._name && _tempTargetedCellsAdjacents[6]._tile._name == e.tileToMove._name)
-        {
-            print("My names match with my up and down neighbors");
-            if(e.tileToMove._name == _tempTargetedCellsAdjacents[2]._adjacentCells[2]._tile._name || e.tileToMove._name == _tempTargetedCellsAdjacents[6]._adjacentCells[6]._tile._name){
-                print(_tempTargetedCellsAdjacents[2]._adjacentCells[2]._tile._name+ " ");
-            }
-        }
-        
-    }
-
-    public void OnGameStartEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnGameStartEmitter" + e);
-    }
-    public void OnGamePauseEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnGamePauseEmitter" + e);
-    }
-    public void OnGameEndEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnGameEndEmitter" + e);
-        this.enabled = false;
-    }
-    
-    #endregion
-    
     #region Event Invokers
     public void OnAppInitialize()
     {
@@ -125,47 +55,177 @@ public class GameManager : MonoBehaviour
 	}
 	#endregion
 
+    #region Event Listeners
+    public event EventHandler<EventArgs> onAppInitializeListener;
+
+    public event EventHandler<EventArgs> onGameStartListener;
+
+    public event EventHandler<OnClickEventArgs> onClickListener;
+
+	public event EventHandler<EventArgs> onDragListener;
+
+	public event EventHandler<EventArgs> onGamePauseListener;
+
+    public event EventHandler<EventArgs> onGameResumeListener;
+
+    public event EventHandler<EventArgs> onGameEndListener;
+    #endregion
+
+    #region Event Emitters
+    public void OnAppInitializeEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnAppInitializeEmitter" + e);
+    }
+
+    public void OnSwitchEmitter(object sender, GridManager.OnSwitchEventArgs e)
+    {
+        List<List<Cell>> matches = new List<List<Cell>>();
+        CheckMatches(e.cells, e.columnsRows, e.switchedCell, e.targetedCell, matches);
+        CheckMatches(e.cells, e.columnsRows, e.targetedCell, e.switchedCell, matches);
+
+        if(matches.Count == 0)
+        {
+
+        }
+        else
+        {
+            // switch
+            // match event -> score et cascades
+        }
+    }
+
+    public void OnGameStartEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnGameStartEmitter" + e);
+    }
+    public void OnGamePauseEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnGamePauseEmitter" + e);
+    }
+    public void OnGameEndEmitter(object sender, EventArgs e)
+    {
+        // ajouter la logique interne
+        print("I'm inside the event OnGameEndEmitter" + e);
+        this.enabled = false;
+    }
+
+    #endregion
+
     #region Methodes
     private void Awake()
     {
         //FindObjectOfType<SoundManager>().onPlaySoundListener += OnAppInitializeEmitter;
+        GetComponent<GridManager>().onSwitchListener += OnSwitchEmitter;
         OnAppInitialize();
         helpers = GetComponent<GridManager>();
-        
     }
     private void Start()
     {
-        
+
         #region souscriptions en début de partie
         FindObjectOfType<TimerManager>().onGameEndTimerListener += OnGameEndEmitter;
         FindObjectOfType<ScoreManager>().onScoreUpdateListener += OnGameStartEmitter;
-        helpers.onSwitchListener += OnSwitchEmitter;
-        //onGameStartListener += OnGameStartEmitter;
-        #endregion
-        OnGameStart();
+		onGamePauseListener += OnGamePauseEmitter;
+		_pauseButton.onClick.AddListener(OnGamePause);
+        //helpers.onSwitchListener += OnSwitchEmitter;
+		//onGameStartListener += OnGameStartEmitter;
+		#endregion
+		OnGameStart();
         StartCoroutine(Playing());
     }
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+
+    }
+
+    public void CheckMatches(Cell[] cells, Vector2Int columnsRows, Cell comparedCell, Cell otherCell, List<List<Cell>> matches)
+    {
+        matches.Add(CheckLine(true, cells, columnsRows, comparedCell, otherCell));
+        matches.Add(CheckLine(false, cells, columnsRows, comparedCell, otherCell));
+    }
+
+    public List<Cell> CheckLine(bool horizontalLine, Cell[] cells, Vector2Int columnsRows, Cell comparedCell, Cell otherCell)
+    {
+        List<Cell> matchingCells = new List<Cell>();
+        int initialIndex = horizontalLine ? otherCell._gridPosition.x : otherCell._gridPosition.y;
+        int cellToCheckIndex;
+
+        int i = initialIndex;
+        bool isMatching = true;
+        while(isMatching && --i >= 0)
         {
-            Debug.Log("Je suis en pause");
-            TogglePause();
+            cellToCheckIndex = horizontalLine ? otherCell._gridPosition.y * columnsRows.x + i : i * columnsRows.x + otherCell._gridPosition.x;
+            isMatching = CheckCell(comparedCell, cells[cellToCheckIndex], matchingCells);
+        }
+
+        i = initialIndex;
+        isMatching = true;
+        while(isMatching && ++i < (horizontalLine ? columnsRows.x : columnsRows.y))
+        {
+            cellToCheckIndex = horizontalLine ? otherCell._gridPosition.y * columnsRows.x + i : i * columnsRows.x + otherCell._gridPosition.x;
+            isMatching = CheckCell(comparedCell, cells[cellToCheckIndex], matchingCells);
+        }
+
+        if(matchingCells.Count > 2)
+        {
+            return matchingCells;
+        }
+        return null;
+    }
+
+    public bool CheckCell(Cell comparedCell, Cell cellToCheck, List<Cell> matchingCells)
+    {
+        if(cellToCheck._tile._name == comparedCell._tile._name)
+        {
+            matchingCells.Add(cellToCheck);
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
-    public void TogglePause()
-    {
-        _isPaused = !_isPaused;
+	#region PauseManager
+	public void TogglePause()
+	{
+		if (_gameIsPaused)
+		{
+			Resume();
+		} else
+		{
+			Pause();
+		}
 
-    }
-    public void Switch(Cell cellToMove, float switchDuration)
-    {
+	}
+	public void Resume()
+	{
+		_pauseMenuUI.SetActive(false);
+		Time.timeScale = 1f;
+		_gameIsPaused = false;
+	}
+	void Pause()
+	{
+		_pauseMenuUI.SetActive(true);
+		Time.timeScale = 0f;
+		_gameIsPaused = true;
+	}
+	public void LoadMenu()
+	{
+		SceneManager.LoadScene("MenuScene");
+	}
+	public void QuitGame()
+	{
+		Debug.Log("Quitting game...");
+		Application.Quit();
+	}
+	#endregion
+	#endregion
 
-    }
-    #endregion
-
-    #region Co-routines
-    public IEnumerator Playing()
+	#region Co-routines
+	public IEnumerator Playing()
     {
         //Touch touch = Input.GetTouch(0);
         while (true)
@@ -188,9 +248,5 @@ public class GameManager : MonoBehaviour
 			yield return null;
         }
     }
-
-    
     #endregion
-
-
 }

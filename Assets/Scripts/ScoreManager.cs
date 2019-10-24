@@ -21,7 +21,7 @@ public class ScoreManager : MonoBehaviour
 	}
 	private void UpdateTextScore()
 	{
-		_textScore.text = "Score : " + Mathf.Round(_score * 10 / 10f);
+		_textScore.text = Mathf.Round(_score * 10 / 10f).ToString();
 	}
 	//private void Awake()
 	//{
