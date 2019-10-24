@@ -65,7 +65,7 @@ public class GameManager : MonoBehaviour
     public event EventHandler<GridManager.OnDropEventArgs> onDropListener;
 
     public event EventHandler<ScoreManager.OnScoreUpdateArgs> onScoreListener;
-    #endregion
+	#endregion
 
 	#region Event Invokers
 	public void OnGameStart()
@@ -103,7 +103,6 @@ public class GameManager : MonoBehaviour
 
     public void OnSwitchEmitter(object sender, GridManager.OnSwitchEventArgs e)
     {
-
 
         Tile tempTile = e.firstCell._tile;
         e.firstCell._tile = e.secondCell._tile;
