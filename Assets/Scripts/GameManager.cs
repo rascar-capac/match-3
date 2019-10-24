@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
     #region Variables
     [SerializeField]
-    private Button _pauseButton;
+    private Button _pauseButton, _musicButton, _soundButton;
 	public bool _gameIsPaused = false;
 	[SerializeField]
 	GameObject _pauseMenuUI;
@@ -19,12 +19,11 @@ public class GameManager : MonoBehaviour
 	#region Co-routines
 	public IEnumerator Playing()
     {
-        //Touch touch = Input.GetTouch(0);
+        
         while (true)
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Debug.Log("Je clique");
 
                 OnClick(new OnClickEventArgs()
                 {
@@ -60,10 +59,10 @@ public class GameManager : MonoBehaviour
     public event EventHandler<OnClickEventArgs> onClickListener;
 
 	public event EventHandler<EventArgs> onDragListener;
-    #endregion
+	#endregion
 
-    #region Event Invokers
-    public void OnGameStart()
+	#region Event Invokers
+	public void OnGameStart()
     {
         onGameStartListener?.Invoke(this, new EventArgs());
     }
@@ -129,18 +128,18 @@ public class GameManager : MonoBehaviour
     #region Methods
     private void Awake()
     {
-        //FindObjectOfType<SoundManager>().onPlaySoundListener += OnAppInitializeEmitter;
         helpers = GetComponent<GridManager>();
         helpers.onSwitchListener += OnSwitchEmitter;
     }
     private void Start()
     {
-        #region souscriptions en début de partie
+		#region souscriptions en début de partie
         FindObjectOfType<TimerManager>().onGameEndTimerListener += OnGameEndEmitter;
         FindObjectOfType<ScoreManager>().onScoreUpdateListener += OnGameStartEmitter;
+		onGameStartListener += OnGameStartEmitter;
 		onGamePauseListener += OnGamePauseEmitter;
 		_pauseButton.onClick.AddListener(OnGamePause);
-		onGameStartListener += OnGameStartEmitter;
+		
 		#endregion
 		OnGameStart();
         StartCoroutine(Playing());
