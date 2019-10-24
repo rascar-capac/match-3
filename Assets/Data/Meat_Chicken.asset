@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tileType: 0
   _tileFamily: 0
-  _name: Chicken
-  _display: {fileID: 21300000, guid: c08f317c34130b64ca9b2865bc56818e, type: 3}
+  _name: Ham
+  _display: {fileID: 21300000, guid: 61cc642255c254148a6db86b54f751fc, type: 3}
   _color: {r: 1, g: 1, b: 1, a: 1}

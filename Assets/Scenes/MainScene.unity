@@ -334,7 +334,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &379598616
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1165,7 +1165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _textScore: {fileID: 1263340567}
-  _score: 10
+  _score: 0
 --- !u!114 &1271318860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1178,7 +1178,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbf741acbf52f744ab34fad3f5c7590d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _gridSize: {x: 6, y: 6}
+  _gridSize: {x: 5, y: 5}
   _columnsRows: {x: 9, y: 9}
   _switchAnimation:
     serializedVersion: 2
@@ -1216,6 +1216,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f0634fd75ed2fb04fbf87cf7f64cb11b, type: 2}
   - {fileID: 11400000, guid: b2f0fa95c4749e94bad219e2110d94b3, type: 2}
   _switchDuration: 0.5
+  _dropDuration: 0.2
 --- !u!114 &1271318861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1263,7 +1264,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _textTimer: {fileID: 2004053022}
-  _timer: 10
+  _timer: 60
 --- !u!114 &1271318864
 MonoBehaviour:
   m_ObjectHideFlags: 0
