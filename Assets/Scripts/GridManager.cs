@@ -33,9 +33,6 @@ public class GridManager : MonoBehaviour
     // grid half size
     Vector2 _gridExtents;
 
-    [SerializeField]
-    float minSwitchingRadius;
-
     Cell _selectedCell;
     Cell _targetedCell;
     Vector2 _initialMousePosition;
@@ -87,7 +84,6 @@ public class GridManager : MonoBehaviour
     {
         return new Vector2Int(index % _columnsRows.x, index % _columnsRows.y);
     }
-
     public Vector2Int ClampPositionToGrid(int xPos, int yPos)
     {
         return new Vector2Int(Mathf.Clamp(xPos, 0, _columnsRows.x - 1), Mathf.Clamp(yPos, 0, _columnsRows.y - 1));
@@ -101,7 +97,6 @@ public class GridManager : MonoBehaviour
         Vector2 localPosition = (Vector2)transform.InverseTransformPoint(position) + _gridExtents;
         return new Vector2Int(Mathf.FloorToInt(localPosition.x / _cellSize.x), Mathf.FloorToInt(localPosition.y / _cellSize.y));
     }
-
     public Cell GetCellFromPosition(int positionX, int positionY)
     {
         if (positionX >= 0 && positionX < _columnsRows.x && positionY >= 0 && positionY < _columnsRows.y)
@@ -118,12 +113,10 @@ public class GridManager : MonoBehaviour
     {
         return (Vector3)((new Vector2(xPos, yPos) * _cellSize) + _cellExtents - _gridExtents) + transform.position;
     }
-
     public Vector3 GridPositionToWorldPosition(Vector2Int pos)
     {
         return GridPositionToWorldPosition(pos.x, pos.y);
     }
-
     public int GridPositionToIndex(int x, int y)
     {
         return (x * _columnsRows.y + y);
@@ -135,11 +128,11 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Event Args
-    public class OnCellCreationArgs : EventArgs
-    {
-        public Vector2Int columnsRows;
-        public Vector2Int cellSize;
-    }
+    // public class OnCellCreationArgs : EventArgs
+    // {
+    //     public Vector2Int columnsRows;
+    //     public Vector2Int cellSize;
+    // }
 
     public class OnSwitchEventArgs
     {
@@ -167,14 +160,6 @@ public class GridManager : MonoBehaviour
         CreateGrid();
         print("I'm inside the event Grid Init");
     }
-
-    // public void OnSwitchEventEmitter(object sender, GameManager.OnSwitchEventArgs e)
-    // {
-    //     Tile ttm = e.tileToMove;
-    //     Tile tgt = e.targetedTile;
-    //     Tile tempTgtTile = _targetedCell._tile;
-    //     print("Switch event triggered");
-    // }
 
     public void OnGridClickEmitter(object sender, GameManager.OnClickEventArgs e)
     {
@@ -238,14 +223,12 @@ public class GridManager : MonoBehaviour
     yield return StartCoroutine(Switch(cellToMove, _switchDuration));
     */
 
-
     void CreateCell(int x, int y)
     {
         int cellIndex = GridPositionToIndex(x, y);
 
         TileData tileData = _tileDatas[UnityEngine.Random.Range(0, _tileDatas.Length)];
         GameObject tileGO = new GameObject(tileData._name + " " + cellIndex);
-
 
         SpriteRenderer sr = tileGO.AddComponent<SpriteRenderer>();
 
@@ -280,9 +263,7 @@ public class GridManager : MonoBehaviour
         {
             for (int y = 0; y < _columnsRows.y; y++)
             {
-
                 CreateCell(x, y);
-
             }
         }
         foreach (Cell cell in _cells)
