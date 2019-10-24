@@ -5,35 +5,34 @@ using System;
 using UnityEngine.UI;
 public class ScoreManager : MonoBehaviour
 {
-	[SerializeField]
-	private Text _textScore;
-	[SerializeField]
-	private float _score = 0;
-	
+    [SerializeField]
+    private Text _textScore;
+    [SerializeField]
+    private int _score = 0;
 
+    public class OnScoreUpdateArgs{
+
+        public int multiplier;
+        public int score;
+    }
 	public event EventHandler<EventArgs> onScoreUpdateListener;
-	private void OnScoreUpdateEmitter(object sender, EventArgs e)
+	private void OnScoreUpdateEmitter(object sender, OnScoreUpdateArgs e)
 	{
-		// ajouter la logique interne
-		print("I'm inside the event OnScoreUpdateEmitter" + e);
-		onScoreUpdateListener?.Invoke(this, new EventArgs());
-		UpdateTextScore();
-	}
-	private void UpdateTextScore()
-	{
-		_textScore.text = Mathf.Round(_score * 10 / 10f).ToString();
-	}
-	//private void Awake()
-	//{
-	//	UpdateTextScore();
-	//}
+        // ajouter la logique interne
+        _score += (e.score * e.multiplier);
+        _textScore.text = _score.ToString();
+        print("I'm inside the event OnScoreUpdateEmitter" + e);
 
-	private void Update()
-	{
-		if(_score > 0)
-		{
-			_score--;
-		}
-		UpdateTextScore();
 	}
+
+    private void Awake()
+    {
+        GetComponent<GameManager>().onScoreListener += OnScoreUpdateEmitter;
+    }
+    //private void Awake()
+    //{
+    //	UpdateTextScore();
+    //}
+
+
 }

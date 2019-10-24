@@ -25,5 +25,4 @@ public class Tile : MonoBehaviour
     public TileFamily _tileFamily;
     public Sprite _display;
     public Color _color;
-    public bool _isEmpty;
 }
