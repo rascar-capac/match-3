@@ -225,6 +225,11 @@ public class GridManager : MonoBehaviour
             }
         }
     }
+
+    public void OnMatchEmitter(object sender, EventArgs e)
+    {
+        // destroy match gameobjects
+    }
     #endregion
 
     #region Methods
@@ -294,6 +299,7 @@ public class GridManager : MonoBehaviour
         gm.onGameStartListener += OnGridInitializeEmitter;
         gm.onClickListener += OnGridClickEmitter;
         gm.onDragListener += OnDragEmitter;
+        gm.onMatchListener += OnMatchEmitter;
         _selectedCell = null;
         _targetedCell = null;
         _isDragging = false;
