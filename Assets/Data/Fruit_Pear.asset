@@ -15,5 +15,5 @@ MonoBehaviour:
   _tileType: 0
   _tileFamily: 2
   _name: Pear
-  _display: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  _color: {r: 0.11517811, g: 1, b: 0, a: 1}
+  _display: {fileID: 21300000, guid: 3addfb0e80216f940aec8b2f6ee44d0b, type: 3}
+  _color: {r: 1, g: 1, b: 1, a: 1}
