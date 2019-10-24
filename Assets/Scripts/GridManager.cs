@@ -168,14 +168,11 @@ public class GridManager : MonoBehaviour
 
     public void OnGridClickEmitter(object sender, GameManager.OnClickEventArgs e)
     {
-        Vector3 mouseWorldPosition = _camera.ScreenToWorldPoint(e.mousePos);
-        print("input.mouseposition : " + e.mousePos);
-        print("mouse world position : "+ mouseWorldPosition);
-        Cell cellToMove = GetCellFromPosition(ClampPositionToGrid(WorldToGridPosition(mouseWorldPosition)));
+		_initialMousePosition = _camera.ScreenToWorldPoint(e.mousePos);
+        Cell cellToMove = GetCellFromPosition(ClampPositionToGrid(WorldToGridPosition(_initialMousePosition)));
         print("(inside emitter) cell :" + cellToMove._tile + " grid position: "+cellToMove._gridPosition+" grid world position: "+cellToMove._gridWorldPosition+" neighbors: "+cellToMove._adjacentCells.ToString());
 		//StartCoroutine(Switching(new Cell(), new Cell(), _switchDuration));
 		_selectedCell = cellToMove;
-		_initialMousePosition = e.mousePos;
 		_isDragging = true;
     }
 
@@ -183,15 +180,16 @@ public class GridManager : MonoBehaviour
 	{
 		if (_isDragging)
 		{
-			Vector2 currentMousePosition = Input.mousePosition;
-			if (Vector3.Distance(currentMousePosition, _initialMousePosition) >= minSwitchingRadius)
+			Vector2 currentMousePosition = _camera.ScreenToWorldPoint( Input.mousePosition);
+
+			float switchAngle = Mathf.Atan2(currentMousePosition.y - _initialMousePosition.y, currentMousePosition.x - _initialMousePosition.x) * Mathf.Rad2Deg;
+			float switchLimit = ((switchAngle < 45 && switchAngle > -45) || (switchAngle > 135 && switchAngle < -135) ? _cellExtents.x: _cellExtents.y);
+			if (Vector2.Distance(currentMousePosition, _initialMousePosition) >= switchLimit)
 			{
-				float switchAngle = Mathf.Atan2(currentMousePosition.y - _initialMousePosition.y, currentMousePosition.x - _initialMousePosition.x) * Mathf.Rad2Deg;
 				int switchIndex = Mathf.FloorToInt(Mathf.Repeat((switchAngle + 45), 360) / 90) * 2;
 				_targetedCell = _selectedCell._adjacentCells[switchIndex];
 				if (_targetedCell != null)
 				{
-
 					Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
 				}
 				_isDragging = false;
