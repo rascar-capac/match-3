@@ -31,10 +31,11 @@ public class SoundManager : MonoBehaviour
 	}
 	public void OnPlaySwitchSoundEmitter(object sender, EventArgs e)
 	{
-		//_audioSource.clip = _audioClip[1];
+		_audioSource.clip = _audioClip[1];
 		if (!_audioSource.isPlaying)
 		{
 			_audioSource.PlayOneShot(_audioClip[1]);
+			_audioSource.clip = _audioClip[0];
 		}
 		
 	}
