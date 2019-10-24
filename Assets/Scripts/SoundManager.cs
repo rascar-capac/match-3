@@ -17,7 +17,7 @@ public class SoundManager : MonoBehaviour
 		_audioSource = GetComponent<AudioSource>();
 		FindObjectOfType<GameManager>().onGameStartListener += OnPlayMusicEmitter;
 		FindObjectOfType<GameManager>().onGameEndListener += OnStopMusicEmitter;
-		FindObjectOfType<GameManager>().onDragListener += OnPlaySwitchSoundEmitter;
+		FindObjectOfType<GridManager>().onSwitchListener += OnPlaySwitchSoundEmitter;
 	}
 	public void OnPlayMusicEmitter(object sender, EventArgs e)
 	{
@@ -29,13 +29,14 @@ public class SoundManager : MonoBehaviour
 		_audioSource.clip = _audioClip[0];
 		_audioSource.Stop();
 	}
-	public void OnPlaySwitchSoundEmitter(object sender, EventArgs e)
+	public void OnPlaySwitchSoundEmitter(object sender, GridManager.OnSwitchEventArgs e)
 	{
 		//_audioSource.clip = _audioClip[1];
-		if (!_audioSource.isPlaying)
-		{
+		//if (!_audioSource.isPlaying)
+		//{
 			_audioSource.PlayOneShot(_audioClip[1]);
-		}
+			//_audioSource.clip = _audioClip[0];
+		//}
 		
 	}
 }

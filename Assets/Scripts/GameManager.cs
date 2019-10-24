@@ -71,7 +71,7 @@ public class GameManager : MonoBehaviour
     public event EventHandler<GridManager.OnDropEventArgs> onDropListener;
 
     public event EventHandler<ScoreManager.OnScoreUpdateArgs> onScoreListener;
-    #endregion
+	#endregion
 
 	#region Event Invokers
 	public void OnGameStart()
