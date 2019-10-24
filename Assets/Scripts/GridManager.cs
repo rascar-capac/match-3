@@ -208,9 +208,6 @@ public class GridManager : MonoBehaviour
                     _targetedCell._tile = tempTile;
                     StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration));
                     Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
-                    _targetedCell = null;
-                    _selectedCell = null;
-
                     OnSwitch(new OnSwitchEventArgs()
                     {
                         cells = _cells,
@@ -218,6 +215,9 @@ public class GridManager : MonoBehaviour
                         switchedCell = _selectedCell,
                         targetedCell = _targetedCell
                     });
+
+                    _targetedCell = null;
+                    _selectedCell = null;
                 }
                 _isDragging = false;
             }
