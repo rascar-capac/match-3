@@ -127,6 +127,7 @@ public class GameManager : MonoBehaviour
     {
         //FindObjectOfType<SoundManager>().onPlaySoundListener += OnAppInitializeEmitter;
         OnAppInitialize();
+        helpers.onSwitchListener += OnSwitchEmitter;
     }
     private void Start()
     {
