@@ -15,5 +15,5 @@ MonoBehaviour:
   _tileType: 0
   _tileFamily: 1
   _name: Turnip
-  _display: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  _color: {r: 0.8018868, g: 0.24586153, b: 0.5021653, a: 1}
+  _display: {fileID: 21300000, guid: 652a7a33ad7084c43b63904152514755, type: 3}
+  _color: {r: 1, g: 1, b: 1, a: 1}

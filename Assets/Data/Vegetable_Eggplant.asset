@@ -15,5 +15,5 @@ MonoBehaviour:
   _tileType: 0
   _tileFamily: 1
   _name: Eggplant
-  _display: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  _color: {r: 0.5663045, g: 0.1745283, b: 1, a: 1}
+  _display: {fileID: 21300000, guid: 91c22ebdfe842de478e7425cd28e5934, type: 3}
+  _color: {r: 1, g: 1, b: 1, a: 1}

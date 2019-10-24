@@ -15,5 +15,5 @@ MonoBehaviour:
   _tileType: 0
   _tileFamily: 1
   _name: Carrot
-  _display: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
-  _color: {r: 1, g: 0.3820239, b: 0, a: 1}
+  _display: {fileID: 21300000, guid: a617f0ac35372ca4091dca44ae7703e4, type: 3}
+  _color: {r: 1, g: 1, b: 1, a: 1}
