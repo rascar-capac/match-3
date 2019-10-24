@@ -6,8 +6,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
-
-    #region Params
+    #region Variables
     [SerializeField]
     private Button _pauseButton;
 	public bool _gameIsPaused = false;
@@ -17,6 +16,31 @@ public class GameManager : MonoBehaviour
     GridManager helpers;
     #endregion
 
+	#region Co-routines
+	public IEnumerator Playing()
+    {
+        //Touch touch = Input.GetTouch(0);
+        while (true)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Debug.Log("Je clique");
+
+                OnClick(new OnClickEventArgs()
+                {
+                    mousePos = Input.mousePosition
+                });
+            }
+
+			if (Input.GetMouseButton(0))
+			{
+				OnDrag();
+			}
+			yield return null;
+        }
+    }
+    #endregion
+
     #region EventArgs
     public class OnClickEventArgs
     {
@@ -24,11 +48,21 @@ public class GameManager : MonoBehaviour
     }
     #endregion
 
+    #region Event Listeners
+    public event EventHandler<EventArgs> onGameStartListener;
+
+	public event EventHandler<EventArgs> onGamePauseListener;
+
+    public event EventHandler<EventArgs> onGameResumeListener;
+
+    public event EventHandler<EventArgs> onGameEndListener;
+
+    public event EventHandler<OnClickEventArgs> onClickListener;
+
+	public event EventHandler<EventArgs> onDragListener;
+    #endregion
+
     #region Event Invokers
-    public void OnAppInitialize()
-    {
-        onAppInitializeListener?.Invoke(this, new EventArgs());
-    }
     public void OnGameStart()
     {
         onGameStartListener?.Invoke(this, new EventArgs());
@@ -55,28 +89,7 @@ public class GameManager : MonoBehaviour
 	}
 	#endregion
 
-    #region Event Listeners
-    public event EventHandler<EventArgs> onAppInitializeListener;
-
-    public event EventHandler<EventArgs> onGameStartListener;
-
-    public event EventHandler<OnClickEventArgs> onClickListener;
-
-	public event EventHandler<EventArgs> onDragListener;
-
-	public event EventHandler<EventArgs> onGamePauseListener;
-
-    public event EventHandler<EventArgs> onGameResumeListener;
-
-    public event EventHandler<EventArgs> onGameEndListener;
-    #endregion
-
     #region Event Emitters
-    public void OnAppInitializeEmitter(object sender, EventArgs e)
-    {
-        // ajouter la logique interne
-        print("I'm inside the event OnAppInitializeEmitter" + e);
-    }
 
     public void OnSwitchEmitter(object sender, GridManager.OnSwitchEventArgs e)
     {
@@ -86,7 +99,7 @@ public class GameManager : MonoBehaviour
 
         if(matches.Count == 0)
         {
-
+            // no switch
         }
         else
         {
@@ -111,34 +124,26 @@ public class GameManager : MonoBehaviour
         print("I'm inside the event OnGameEndEmitter" + e);
         this.enabled = false;
     }
-
     #endregion
 
-    #region Methodes
+    #region Methods
     private void Awake()
     {
         //FindObjectOfType<SoundManager>().onPlaySoundListener += OnAppInitializeEmitter;
-        GetComponent<GridManager>().onSwitchListener += OnSwitchEmitter;
-        OnAppInitialize();
         helpers = GetComponent<GridManager>();
+        helpers.onSwitchListener += OnSwitchEmitter;
     }
     private void Start()
     {
-
         #region souscriptions en début de partie
         FindObjectOfType<TimerManager>().onGameEndTimerListener += OnGameEndEmitter;
         FindObjectOfType<ScoreManager>().onScoreUpdateListener += OnGameStartEmitter;
 		onGamePauseListener += OnGamePauseEmitter;
 		_pauseButton.onClick.AddListener(OnGamePause);
-        //helpers.onSwitchListener += OnSwitchEmitter;
-		//onGameStartListener += OnGameStartEmitter;
+		onGameStartListener += OnGameStartEmitter;
 		#endregion
 		OnGameStart();
         StartCoroutine(Playing());
-    }
-    private void Update()
-    {
-
     }
 
     public void CheckMatches(Cell[] cells, Vector2Int columnsRows, Cell comparedCell, Cell otherCell, List<List<Cell>> matches)
@@ -223,30 +228,4 @@ public class GameManager : MonoBehaviour
 	}
 	#endregion
 	#endregion
-
-	#region Co-routines
-	public IEnumerator Playing()
-    {
-        //Touch touch = Input.GetTouch(0);
-        while (true)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Debug.Log("Je clique");
-
-                OnClick(new OnClickEventArgs()
-                {
-                    mousePos = Input.mousePosition
-
-                });
-            }
-
-			if (Input.GetMouseButton(0))
-			{
-				OnDrag();
-			}
-			yield return null;
-        }
-    }
-    #endregion
 }
