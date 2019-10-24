@@ -3,40 +3,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
+[RequireComponent(typeof(AudioSource))]
 public class SoundManager : MonoBehaviour
 {
 	[SerializeField]
-	private AudioClip _mainMusic;
+	private AudioClip[] _audioClip;
+	private bool _play;
+	private bool _toogleChange;
+	private AudioSource _audioSource;
 
-	public event EventHandler<EventArgs> onPlaySoundListener;
-
-	private void Start()
+	private void Awake()
 	{
-		//Play("MainTheme");
+		_audioSource = GetComponent<AudioSource>();
+		FindObjectOfType<GameManager>().onGameStartListener += OnPlayMusicEmitter;
+		FindObjectOfType<GameManager>().onGameEndListener += OnStopMusicEmitter;
+		FindObjectOfType<GameManager>().onDragListener += OnPlaySwitchSoundEmitter;
 	}
-
-	public void Play()
+	public void OnPlayMusicEmitter(object sender, EventArgs e)
 	{
-		//SoundManager s = Array.Find(sounds, item => item.name == sound);
-
-		//if (PauseManager.GameIsPaused)
-		//{
-		//	//s.source.pitch *= 0.5f
-		//}
+		_audioSource.clip = _audioClip[0];
+		_audioSource.Play();
 	}
-	public void OnPlayMainMusicEmitter(object sender, EventArgs e)
+	public void OnStopMusicEmitter(object sender, EventArgs e)
 	{
-		// ajouter la logique interne
-		print("I play main music");
-		onPlaySoundListener?.Invoke(this, new EventArgs());
+		_audioSource.clip = _audioClip[0];
+		_audioSource.Stop();
 	}
-	public void OnPlaySwipeSoundEmitter(object sender, EventArgs e)
+	public void OnPlaySwitchSoundEmitter(object sender, EventArgs e)
 	{
-
+		//_audioSource.clip = _audioClip[1];
+		if (!_audioSource.isPlaying)
+		{
+			_audioSource.PlayOneShot(_audioClip[1]);
+		}
+		
 	}
-	public void OnPlayBonusSoundEmitter(object sender, EventArgs e)
-	{
-
-	}
-	
 }
