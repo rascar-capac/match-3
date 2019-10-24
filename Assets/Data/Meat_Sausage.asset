@@ -15,5 +15,5 @@ MonoBehaviour:
   _tileType: 0
   _tileFamily: 0
   _name: Sausage
-  _display: {fileID: 21300000, guid: c446e594633a5e544baecc9c90eac437, type: 3}
+  _display: {fileID: 21300000, guid: bf668e4f1b2fc044e8c3832c6304c078, type: 3}
   _color: {r: 1, g: 1, b: 1, a: 1}
