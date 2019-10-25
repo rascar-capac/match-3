@@ -25,7 +25,7 @@ public class GridManager : MonoBehaviour
     TileData[] _tileDatas;
 
     [SerializeField]
-    public float _switchDuration = 0.5f;
+    public float _switchDuration = 0.3f;
 
     [SerializeField]
     float _dropDuration = 0.2f;
@@ -90,21 +90,18 @@ public class GridManager : MonoBehaviour
 
     public IEnumerator Dropping()
     {
-        while (true)
+        for (int i = 0 ; i < _cells.Length ; i++)
         {
-            for (int i = 0; i < _cells.Length; i++)
+            if(_cells[i]._adjacentCells[6] != null && _cells[i]._adjacentCells[6]._isEmpty == false)
             {
-                if(_cells[i]._adjacentCells[6] != null && _cells[i]._adjacentCells[6]._isEmpty == false)
-                {
-                    Cell cellToDrop = _cells[i];
-                    Cell emptyCell = _cells[i]._adjacentCells[6];
+                Cell cellToDrop = _cells[i];
+                Cell emptyCell = _cells[i]._adjacentCells[6];
 
-                    StartCoroutine(Switching(cellToDrop, emptyCell, _dropDuration, true));
-                    print(cellToDrop._tileGo.name + " Should drop");
-                }
+                StartCoroutine(Switching(cellToDrop, emptyCell, _dropDuration, true));
+                print(cellToDrop._tileGo.name + " Should drop");
             }
-            yield return null;
         }
+        yield return null;
     }
     #endregion
 
@@ -211,7 +208,6 @@ public class GridManager : MonoBehaviour
     {
         _initialMousePosition = _camera.ScreenToWorldPoint(e.mousePos);
         Cell cellToMove = GetCellFromPosition(ClampPositionToGrid(WorldToGridPosition(_initialMousePosition)));
-        print("(inside emitter) cell :" + cellToMove._tile + " grid position: " + cellToMove._gridPosition + " grid world position: " + cellToMove._gridWorldPosition + " neighbors: " + cellToMove._adjacentCells.ToString());
         _selectedCell = cellToMove;
         _isDragging = true;
     }
@@ -228,14 +224,11 @@ public class GridManager : MonoBehaviour
             if (Vector2.Distance(currentMousePosition, _initialMousePosition) >= switchLimit)
             {
                 int switchIndex = Mathf.FloorToInt(Mathf.Repeat((switchAngle + 45), 360) / 90) * 2;
-                    Debug.Log("(inside emitter) selectedCell : " + _selectedCell._tile + " grid position: " + _selectedCell._gridPosition + " grid world position: " + _selectedCell._gridWorldPosition + " neighbors: " + _selectedCell._adjacentCells.ToString());
                 _targetedCell = _selectedCell._adjacentCells[switchIndex];
                 if (_targetedCell != null)
                 {
-                    Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
                     StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration, true));
                     Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
-
                     _targetedCell = null;
                     _selectedCell = null;
                 }
@@ -250,9 +243,10 @@ public class GridManager : MonoBehaviour
         {
             foreach(Cell cell in cells)
             {
-                Destroy(cell._tileGo);
+                cell._isEmpty = true;
             }
         }
+        Dropping();
     }
     #endregion
 
@@ -334,7 +328,6 @@ public class GridManager : MonoBehaviour
         }
         foreach (Cell cell in _cells)
         {
-            print("Getting adjacent cells of " + cell);
             cell.getAdjacentCells();
         }
         print("Grid created");

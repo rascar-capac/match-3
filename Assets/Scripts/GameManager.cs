@@ -151,17 +151,14 @@ public class GameManager : MonoBehaviour
     public void OnGameStartEmitter(object sender, EventArgs e)
     {
         // ajouter la logique interne
-        print("I'm inside the event OnGameStartEmitter" + e);
     }
     public void OnGamePauseEmitter(object sender, EventArgs e)
     {
         // ajouter la logique interne
-        print("I'm inside the event OnGamePauseEmitter" + e);
     }
     public void OnGameEndEmitter(object sender, EventArgs e)
     {
         // ajouter la logique interne
-        print("I'm inside the event OnGameEndEmitter" + e);
         this.enabled = false;
     }
     #endregion
@@ -223,7 +220,6 @@ public class GameManager : MonoBehaviour
 
     public bool CheckCell(Cell comparedCell, Cell cellToCheck, List<Cell> matchingCells)
     {
-        Debug.Log(cellToCheck._tile._name + " " + cellToCheck._gridPosition + " - " + comparedCell._tile._name + " " + comparedCell._gridPosition);
         if(cellToCheck._tile._name == comparedCell._tile._name)
         {
             matchingCells.Add(cellToCheck);
