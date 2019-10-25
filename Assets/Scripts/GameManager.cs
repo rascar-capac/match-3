@@ -17,15 +17,13 @@ public class GameManager : MonoBehaviour
     #endregion
 
 	#region Co-routines
-
-
 	public IEnumerator Playing()
     {
         while (true)
         {
+
             if (Input.GetMouseButtonDown(0))
             {
-
                 OnClick(new OnClickEventArgs()
                 {
                     mousePos = Input.mousePosition
@@ -89,7 +87,7 @@ public class GameManager : MonoBehaviour
     public void OnGameEnd()
     {
         onGameEndListener?.Invoke(this, new EventArgs());
-    }
+	}
     public void OnClick(OnClickEventArgs e)
     {
         onClickListener?.Invoke(this, e);
@@ -158,9 +156,10 @@ public class GameManager : MonoBehaviour
     }
     public void OnGameEndEmitter(object sender, EventArgs e)
     {
-        // ajouter la logique interne
-        this.enabled = false;
-    }
+		//this.enabled = false;
+
+		SceneManager.LoadScene("EndScene");
+	}
     #endregion
 
     #region Methods
@@ -168,7 +167,7 @@ public class GameManager : MonoBehaviour
     {
         _helpers = GetComponent<GridManager>();
         _helpers.onSwitchListener += OnSwitchEmitter;
-    }
+	}
     private void Start()
     {
 		#region souscriptions en début de partie
@@ -240,11 +239,11 @@ public class GameManager : MonoBehaviour
 		{
 			Pause();
 		}
-
 	}
 	public void Resume()
 	{
 		_pauseMenuUI.SetActive(false);
+		Debug.Log("pause menu " + _pauseMenuUI);
 		Time.timeScale = 1f;
 		_gameIsPaused = false;
 	}

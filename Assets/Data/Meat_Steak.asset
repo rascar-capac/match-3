@@ -15,5 +15,5 @@ MonoBehaviour:
   _tileType: 0
   _tileFamily: 0
   _name: Steak
-  _display: {fileID: 21300000, guid: 2416ed55f55774d46b63cd7125b6ec14, type: 3}
+  _display: {fileID: 21300000, guid: 49453e3ebfd1afc44a50153360de97ac, type: 3}
   _color: {r: 1, g: 1, b: 1, a: 1}
