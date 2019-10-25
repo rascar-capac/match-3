@@ -43,7 +43,7 @@ public class GridManager : MonoBehaviour
     #endregion
 
     #region Coroutines
-    public IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration)
+    public IEnumerator Switching(Cell cell, Cell targetedCell, float switchDuration, bool mustCheckMatch)
     {
         float t = 0;
         float tRatio;
@@ -73,6 +73,16 @@ public class GridManager : MonoBehaviour
         cell._tileGo = targetedCell._tileGo;
         targetedCell._tileGo = tempTileGo;
 
+        if(mustCheckMatch)
+        {
+            OnSwitch(new OnSwitchEventArgs()
+            {
+                cells = _cells,
+                columnsRows = _columnsRows,
+                firstCell = cell,
+                secondCell = targetedCell
+            });
+        }
         yield return null;
     }
 
@@ -89,7 +99,7 @@ public class GridManager : MonoBehaviour
                     Cell cellToDrop = _cells[i];
                     Cell emptyCell = _cells[i]._adjacentCells[6];
 
-                    StartCoroutine(Switching(cellToDrop, emptyCell, _dropDuration));
+                    StartCoroutine(Switching(cellToDrop, emptyCell, _dropDuration, true));
                     print(cellToDrop._tileGo.name + " Should drop");
                 }
             }
@@ -189,11 +199,11 @@ public class GridManager : MonoBehaviour
         {
             if(cell._isEmpty && cell._adjacentCells[2] == null)
             {
-                
+
             }
             if (cell._adjacentCells[2]._isEmpty && cell._adjacentCells != null)
             {
-                StartCoroutine(Switching(cell, cell._adjacentCells[2], _dropDuration));
+                StartCoroutine(Switching(cell, cell._adjacentCells[2], _dropDuration, true));
             }
         }
     }
@@ -223,14 +233,7 @@ public class GridManager : MonoBehaviour
                 if (_targetedCell != null)
                 {
                     Debug.Log("(inside emitter) targetedCell :" + _targetedCell._tile + " grid position: " + _targetedCell._gridPosition + " grid world position: " + _targetedCell._gridWorldPosition + " neighbors: " + _targetedCell._adjacentCells.ToString());
-                    StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration));
-                    OnSwitch(new OnSwitchEventArgs()
-                    {
-                        cells = _cells,
-                        columnsRows = _columnsRows,
-                        firstCell = _selectedCell,
-                        secondCell = _targetedCell
-                    });
+                    StartCoroutine(Switching(_selectedCell, _targetedCell, _switchDuration, true));
                     Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
 
                     _targetedCell = null;
