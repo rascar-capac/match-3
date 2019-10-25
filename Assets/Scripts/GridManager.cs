@@ -247,7 +247,14 @@ public class GridManager : MonoBehaviour
                 Cell currentCell = GetCellFromPosition(j, i);
                 if(currentCell._isEmpty)
                 {
-                    emptyCells.Add(currentCell);
+                    if(currentCell._gridPosition.y == _columnsRows.y - 1)
+                    {
+                        GenerateTile(currentCell);
+                    }
+                    else
+                    {
+                        emptyCells.Add(currentCell);
+                    }
                 }
             }
 
@@ -259,6 +266,7 @@ public class GridManager : MonoBehaviour
                     j++;
                 }
                 Cell droppingTileCell = GetCellFromPosition(cell._gridPosition.x, j);
+                droppingTileCell._tileGo.transform.position = cell._gridWorldPosition;
                 cell._tileGo = droppingTileCell._tileGo;
                 cell._tile = droppingTileCell._tile;
                 droppingTileCell._isEmpty = true;
@@ -279,7 +287,6 @@ public class GridManager : MonoBehaviour
 
     void GenerateTile(Cell cell)
     {
-
         TileData tileData = _tileDatas[UnityEngine.Random.Range(0, _tileDatas.Length)];
         GameObject tileGO = new GameObject(tileData._name + " " + cell._index);
 
