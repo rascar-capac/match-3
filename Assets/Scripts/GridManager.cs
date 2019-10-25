@@ -289,6 +289,7 @@ public class GridManager : MonoBehaviour
     {
         TileData tileData = _tileDatas[UnityEngine.Random.Range(0, _tileDatas.Length)];
         GameObject tileGO = new GameObject(tileData._name + " " + cell._index);
+        tileGO.transform.position = cell._gridWorldPosition;
 
         SpriteRenderer sr = tileGO.AddComponent<SpriteRenderer>();
 
