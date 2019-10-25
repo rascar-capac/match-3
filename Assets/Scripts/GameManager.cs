@@ -67,8 +67,6 @@ public class GameManager : MonoBehaviour
     public event EventHandler<OnMatchEventArgs> onMatchListener;
 
     public event EventHandler<GridManager.OnDropEventArgs> onDropListener;
-
-    public event EventHandler<ScoreManager.OnScoreUpdateArgs> onScoreListener;
 	#endregion
 
 	#region Event Invokers
@@ -156,8 +154,6 @@ public class GameManager : MonoBehaviour
     }
     public void OnGameEndEmitter(object sender, EventArgs e)
     {
-		//this.enabled = false;
-
 		SceneManager.LoadScene("EndScene");
 	}
     #endregion
@@ -172,11 +168,10 @@ public class GameManager : MonoBehaviour
     {
 		#region souscriptions en début de partie
         FindObjectOfType<TimerManager>().onGameEndTimerListener += OnGameEndEmitter;
-        FindObjectOfType<ScoreManager>().onScoreUpdateListener += OnGameStartEmitter;
+		FindObjectOfType<ScoreManager>().onScoreUpdateListener += OnGameStartEmitter;
 		onGameStartListener += OnGameStartEmitter;
 		onGamePauseListener += OnGamePauseEmitter;
 		_pauseButton.onClick.AddListener(OnGamePause);
-
 		#endregion
 		OnGameStart();
         StartCoroutine(Playing());
