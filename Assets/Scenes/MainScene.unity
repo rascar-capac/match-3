@@ -441,6 +441,7 @@ GameObject:
   - component: {fileID: 498708339}
   - component: {fileID: 498708341}
   - component: {fileID: 498708340}
+  - component: {fileID: 498708343}
   - component: {fileID: 498708342}
   m_Layer: 5
   m_Name: Logo
@@ -486,7 +487,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 7bed67616500b8649b07e0ba0ba2255f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f0185c2e79427d64a871d66ce71532d9, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -517,7 +518,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 2, y: -2}
+  m_EffectDistance: {x: 1, y: -2}
+  m_UseGraphicAlpha: 1
+--- !u!114 &498708343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 498708338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
+  m_EffectDistance: {x: 1, y: 0}
   m_UseGraphicAlpha: 1
 --- !u!1 &519420028
 GameObject:
@@ -1146,7 +1162,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _textTimer: {fileID: 2004053022}
-  _timer: 3
+  _timer: 60
 --- !u!114 &1271318864
 MonoBehaviour:
   m_ObjectHideFlags: 0
