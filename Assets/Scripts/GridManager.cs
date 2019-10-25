@@ -247,30 +247,46 @@ public class GridManager : MonoBehaviour
                 Cell currentCell = GetCellFromPosition(j, i);
                 if(currentCell._isEmpty)
                 {
-                    if(currentCell._gridPosition.y == _columnsRows.y - 1)
-                    {
-                        GenerateTile(currentCell);
-                    }
-                    else
-                    {
-                        emptyCells.Add(currentCell);
-                    }
+                    emptyCells.Add(currentCell);
                 }
             }
 
             foreach(Cell cell in emptyCells)
             {
-                int j = cell._gridPosition.y + 1;
-                while(GetCellFromPosition(cell._gridPosition.x, j)._isEmpty)
+                bool isTilesAbove = true;
+                int j = cell._gridPosition.y;
+                while(isTilesAbove && GetCellFromPosition(cell._gridPosition.x, j)._isEmpty)
                 {
-                    j++;
+                    if(j == _columnsRows.y - 1)
+                    {
+                        isTilesAbove = false;
+                    }
+                    else
+                    {
+                        j++;
+                    }
                 }
-                Cell droppingTileCell = GetCellFromPosition(cell._gridPosition.x, j);
-                droppingTileCell._tileGo.transform.position = cell._gridWorldPosition;
-                cell._tileGo = droppingTileCell._tileGo;
-                cell._tile = droppingTileCell._tile;
-                droppingTileCell._isEmpty = true;
+                if(isTilesAbove)
+                {
+                    Cell droppingTileCell = GetCellFromPosition(cell._gridPosition.x, j);
+                    droppingTileCell._tileGo.transform.position = cell._gridWorldPosition;
+                    cell._tileGo.transform.localScale = Vector3.one;
+                    cell._tileGo = droppingTileCell._tileGo;
+                    cell._tile = droppingTileCell._tile;
+
+                    cell._isEmpty = false;
+                    droppingTileCell._isEmpty = true;
+                }
+                else
+                {
+                    GenerateTile(cell);
+                }
             }
+        }
+
+        foreach(Cell cell in _cells)
+        {
+            Debug.Log(cell._gridPosition + " " + cell._tile._name);
         }
         Dropping();
     }

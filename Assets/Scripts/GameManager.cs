@@ -126,16 +126,16 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // Debug.Log(matches.Count + " matches");
-            // foreach(List<Cell> match in matches)
-            // {
-            //     String matchDescription = "";
-            //     foreach(Cell cell in match)
-            //     {
-            //         matchDescription += cell._gridPosition + " - ";
-            //     }
-            //     Debug.Log(matchDescription);
-            // }
+            Debug.Log(matches.Count + " matches");
+            foreach(List<Cell> match in matches)
+            {
+                String matchDescription = "";
+                foreach(Cell cell in match)
+                {
+                    matchDescription += cell._gridPosition + " - ";
+                }
+                Debug.Log(matchDescription);
+            }
 
             OnMatch(new OnMatchEventArgs()
             {
