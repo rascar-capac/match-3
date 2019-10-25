@@ -179,7 +179,24 @@ public class GridManager : MonoBehaviour
     {
         CreateGrid();
     }
-
+    public class DropEventArgs
+    {
+        public List<Cell> _cells;
+    }
+    public void OnDropEmitter(object sender, DropEventArgs e)
+    {
+        foreach (Cell cell in e._cells)
+        {
+            if(cell._isEmpty && cell._adjacentCells[2] == null)
+            {
+                
+            }
+            if (cell._adjacentCells[2]._isEmpty && cell._adjacentCells != null)
+            {
+                StartCoroutine(Switching(cell, cell._adjacentCells[2], _dropDuration));
+            }
+        }
+    }
     public void OnGridClickEmitter(object sender, GameManager.OnClickEventArgs e)
     {
         _initialMousePosition = _camera.ScreenToWorldPoint(e.mousePos);
@@ -245,6 +262,31 @@ public class GridManager : MonoBehaviour
         _gridExtents = _gridSize * 0.5f;
     }
 
+    void GenerateTile(int cellIndex)
+    {
+
+        TileData tileData = _tileDatas[UnityEngine.Random.Range(0, _tileDatas.Length)];
+        GameObject tileGO = new GameObject(tileData._name + " " + cellIndex);
+
+        SpriteRenderer sr = tileGO.AddComponent<SpriteRenderer>();
+
+        Tile tempTile = tileGO.AddComponent<Tile>();
+
+        tempTile._name = tileData._name;
+        tempTile._cellIndex = cellIndex;
+        tempTile._tileFamily = tileData._tileFamily;
+        tempTile._display = tileData._display;
+
+        BoxCollider2D bx = tileGO.AddComponent<BoxCollider2D>();
+
+        bx.size = new Vector2(_cellExtents.x, _cellExtents.y);
+        bx.isTrigger = true;
+
+        sr.sprite = tileData._display;
+        sr.color = tileData._color;
+
+        _cells[cellIndex]._tile = tempTile;
+    }
     void CreateCell(int x, int y)
     {
         int cellIndex = GridPositionToIndex(x, y);
