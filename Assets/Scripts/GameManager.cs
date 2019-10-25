@@ -126,7 +126,7 @@ public class GameManager : MonoBehaviour
             e.secondCell._tile = tempTile;
 
             Debug.Log("no match");
-            StartCoroutine(_helpers.Switching(e.firstCell, e.secondCell, _helpers._switchDuration));
+            StartCoroutine(_helpers.Switching(e.firstCell, e.secondCell, _helpers._switchDuration, false));
         }
         else
         {
@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
             OnMatch(new OnMatchEventArgs()
             {
                 matches = matches
-            });// match event -> score et cascades
+            });
         }
     }
 
