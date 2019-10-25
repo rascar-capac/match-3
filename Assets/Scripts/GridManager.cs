@@ -190,7 +190,7 @@ public class GridManager : MonoBehaviour
         {
             if(cell._isEmpty && cell._adjacentCells[2] == null)
             {
-                
+                GenerateTile(cell);
             }
             if (cell._adjacentCells[2]._isEmpty && cell._adjacentCells != null)
             {
@@ -258,18 +258,18 @@ public class GridManager : MonoBehaviour
         _gridExtents = _gridSize * 0.5f;
     }
 
-    void GenerateTile(int cellIndex)
+    void GenerateTile(Cell cell)
     {
 
         TileData tileData = _tileDatas[UnityEngine.Random.Range(0, _tileDatas.Length)];
-        GameObject tileGO = new GameObject(tileData._name + " " + cellIndex);
+        GameObject tileGO = new GameObject(tileData._name + " " + cell._index);
 
         SpriteRenderer sr = tileGO.AddComponent<SpriteRenderer>();
 
         Tile tempTile = tileGO.AddComponent<Tile>();
 
         tempTile._name = tileData._name;
-        tempTile._cellIndex = cellIndex;
+        tempTile._cellIndex = cell._index;
         tempTile._tileFamily = tileData._tileFamily;
         tempTile._display = tileData._display;
 
@@ -281,7 +281,8 @@ public class GridManager : MonoBehaviour
         sr.sprite = tileData._display;
         sr.color = tileData._color;
 
-        _cells[cellIndex]._tile = tempTile;
+        cell._isEmpty = false;
+        cell._tile = tempTile;
     }
     void CreateCell(int x, int y)
     {
