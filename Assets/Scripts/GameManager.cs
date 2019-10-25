@@ -173,6 +173,7 @@ public class GameManager : MonoBehaviour
 		onGamePauseListener += OnGamePauseEmitter;
 		_pauseButton.onClick.AddListener(OnGamePause);
 		#endregion
+		_pauseMenuUI.SetActive(false);
 		OnGameStart();
         StartCoroutine(Playing());
     }
