@@ -15,8 +15,6 @@ public class TimerManager : MonoBehaviour
 	public event EventHandler<EventArgs> onGameEndTimerListener;
 	private void OnGameEndTimerEmitter(object sender, EventArgs e)
 	{
-		// ajouter la logique interne
-		print("I'm inside the event OnGameEndTimer");
 		onGameEndTimerListener?.Invoke(this, new EventArgs());
 	}
 	private void UpdateTextTimer()
@@ -25,6 +23,7 @@ public class TimerManager : MonoBehaviour
 	}
 	private void Awake()
 	{
+		FindObjectOfType<GameManager>().onGameEndListener += OnGameEndTimerEmitter;
 		UpdateTextTimer();
 	}
 	private void Update()

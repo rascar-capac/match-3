@@ -9,7 +9,7 @@ public class SoundManager : MonoBehaviour
 	[SerializeField]
 	private AudioClip[] _audioClip;
 	private bool _play;
-	private bool _toogleChange;
+	private bool _toogleChange = false;
 	private AudioSource _audioSource;
 
 	private void Awake()
