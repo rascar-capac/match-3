@@ -90,17 +90,7 @@ public class GridManager : MonoBehaviour
 
     public IEnumerator Dropping()
     {
-        for (int i = 0 ; i < _cells.Length ; i++)
-        {
-            if(_cells[i]._adjacentCells[6] != null && _cells[i]._adjacentCells[6]._isEmpty == false)
-            {
-                Cell cellToDrop = _cells[i];
-                Cell emptyCell = _cells[i]._adjacentCells[6];
-
-                StartCoroutine(Switching(cellToDrop, emptyCell, _dropDuration, true));
-                print(cellToDrop._tileGo.name + " Should drop");
-            }
-        }
+        // drop animation
         yield return null;
     }
     #endregion
@@ -244,7 +234,34 @@ public class GridManager : MonoBehaviour
         {
             foreach(Cell cell in cells)
             {
+                Destroy(cell._tileGo);
                 cell._isEmpty = true;
+            }
+        }
+
+        for(int i = 0 ; i < _columnsRows.y ; i++)
+        {
+            List<Cell> emptyCells = new List<Cell>();
+            for(int j = 0 ; j < _columnsRows.x ; j++)
+            {
+                Cell currentCell = GetCellFromPosition(j, i);
+                if(currentCell._isEmpty)
+                {
+                    emptyCells.Add(currentCell);
+                }
+            }
+
+            foreach(Cell cell in emptyCells)
+            {
+                int j = cell._gridPosition.y + 1;
+                while(GetCellFromPosition(cell._gridPosition.x, j)._isEmpty)
+                {
+                    j++;
+                }
+                Cell droppingTileCell = GetCellFromPosition(cell._gridPosition.x, j);
+                cell._tileGo = droppingTileCell._tileGo;
+                cell._tile = droppingTileCell._tile;
+                droppingTileCell._isEmpty = true;
             }
         }
         Dropping();
