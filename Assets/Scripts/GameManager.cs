@@ -144,7 +144,7 @@ public class GameManager : MonoBehaviour
             OnMatch(new OnMatchEventArgs()
             {
                 matches = matches
-            });// match event -> score et cascades
+            });
         }
     }
 

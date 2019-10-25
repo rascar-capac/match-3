@@ -69,7 +69,6 @@ public class GridManager : MonoBehaviour
         bool tempEmpty = targetedCell._isEmpty;
         cell._isEmpty = tempEmpty;
 
-
         GameObject tempTileGo = cell._tileGo;
         cell._tileGo = targetedCell._tileGo;
         targetedCell._tileGo = tempTileGo;
@@ -215,7 +214,6 @@ public class GridManager : MonoBehaviour
                         firstCell = _selectedCell,
                         secondCell = _targetedCell
                     });
-
                     Debug.Log("(inside emitter) cells have switched; targetedCell: " + _targetedCell._tile + " + selectedCell: " + _selectedCell._tile);
 
                     _targetedCell = null;
@@ -228,7 +226,13 @@ public class GridManager : MonoBehaviour
 
     public void OnMatchEmitter(object sender, GameManager.OnMatchEventArgs e)
     {
-        // destroy match gameobjects
+        foreach(List<Cell> cells in e.matches)
+        {
+            foreach(Cell cell in cells)
+            {
+                Destroy(cell._tileGo);
+            }
+        }
     }
     #endregion
 
