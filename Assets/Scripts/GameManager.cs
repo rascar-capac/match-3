@@ -44,6 +44,11 @@ public class GameManager : MonoBehaviour
     {
         public Vector3 mousePos;
     }
+
+    public class OnMatchEventArgs
+    {
+        public List<List<Cell>> matches;
+    }
     #endregion
 
     #region Event Listeners
@@ -58,6 +63,8 @@ public class GameManager : MonoBehaviour
     public event EventHandler<OnClickEventArgs> onClickListener;
 
 	public event EventHandler<EventArgs> onDragListener;
+
+    public event EventHandler<OnMatchEventArgs> onMatchListener;
 
     public event EventHandler<GridManager.OnDropEventArgs> onDropListener;
 
@@ -93,13 +100,15 @@ public class GameManager : MonoBehaviour
 	{
 		onDragListener?.Invoke(this, new EventArgs());
 	}
+    public void OnMatch(OnMatchEventArgs e)
+    {
+        onMatchListener?.Invoke(this, e);
+    }
 	#endregion
 
     #region Event Emitters
-
     public void OnSwitchEmitter(object sender, GridManager.OnSwitchEventArgs e)
     {
-
         Tile tempTile = e.firstCell._tile;
         e.firstCell._tile = e.secondCell._tile;
         e.secondCell._tile = tempTile;
@@ -115,21 +124,25 @@ public class GameManager : MonoBehaviour
             e.secondCell._tile = tempTile;
 
             Debug.Log("no match");
-            StartCoroutine(_helpers.Switching(e.firstCell, e.secondCell, _helpers._switchDuration));
+            StartCoroutine(_helpers.Switching(e.firstCell, e.secondCell, _helpers._switchDuration, false));
         }
         else
         {
-            Debug.Log(matches.Count + " matches");
-            foreach(List<Cell> match in matches)
+            // Debug.Log(matches.Count + " matches");
+            // foreach(List<Cell> match in matches)
+            // {
+            //     String matchDescription = "";
+            //     foreach(Cell cell in match)
+            //     {
+            //         matchDescription += cell._gridPosition + " - ";
+            //     }
+            //     Debug.Log(matchDescription);
+            // }
+
+            OnMatch(new OnMatchEventArgs()
             {
-                String matchDescription = "";
-                foreach(Cell cell in match)
-                {
-                    matchDescription += cell._gridPosition + " - ";
-                }
-                Debug.Log(matchDescription);
-            }
-            // onMatchListener?.Invoke(this, new EventArgs(){})// match event -> score et cascades
+                matches = matches
+            });
         }
     }
 
