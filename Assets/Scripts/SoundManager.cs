@@ -9,7 +9,6 @@ public class SoundManager : MonoBehaviour
 	[SerializeField]
 	private AudioClip[] _audioClip;
 	private bool _play;
-	private bool _toogleChange = false;
 	private AudioSource _audioSource;
 
 	private void Awake()
@@ -31,12 +30,6 @@ public class SoundManager : MonoBehaviour
 	}
 	public void OnPlaySwitchSoundEmitter(object sender, GridManager.OnSwitchEventArgs e)
 	{
-		//_audioSource.clip = _audioClip[1];
-		//if (!_audioSource.isPlaying)
-		//{
 			_audioSource.PlayOneShot(_audioClip[1]);
-			//_audioSource.clip = _audioClip[0];
-		//}
-		
 	}
 }
